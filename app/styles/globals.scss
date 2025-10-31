@@ -4,43 +4,96 @@
 @mixin light {
   --theme: light;
 
-  /* color */
-  --white: white;
-  --black: rgb(48, 48, 48);
-  --gray: rgb(250, 250, 250);
-  --primary: rgb(29, 147, 171);
-  --second: rgb(231, 248, 255);
-  --hover-color: #f3f3f3;
-  --bar-color: rgba(0, 0, 0, 0.1);
+  /* EvidenceSeek Pharmaceutical Theme Colors */
+  --white: #FFFFFF;
+  --black: #1A237E; /* Deep Navy for text */
+  --gray: #FAFAFA; /* Lab White background */
+  --primary: #006B7D; /* Deep Teal - Medical Blue-Green */
+  --secondary: #00BCD4; /* Vibrant Cyan - Biotechnology */
+  --accent: #7B1FA2; /* Analysis Purple */
+  --second: #E8F5F7; /* Light Cyan background */
+  --hover-color: #F0F9FA;
+  --bar-color: rgba(0, 107, 125, 0.15);
   --theme-color: var(--gray);
+  
+  /* Status Colors */
+  --success: #4CAF50; /* Success Green */
+  --warning: #FF9800; /* Warning Amber */
+  --error: #F44336; /* Error Red */
+  --info: #00BCD4; /* Info Cyan */
+  
+  /* Text Colors */
+  --text-primary: #1A237E;
+  --text-secondary: #455A64; /* Clinical Gray */
+  --text-tertiary: #78909C;
+  --text-link: #006B7D;
+  
+  /* Border Colors */
+  --border-color: #ECEFF1; /* Light Gray borders */
+  --border-in-light: 1px solid #ECEFF1;
+  --border-focus: 2px solid #006B7D;
 
-  /* shadow */
-  --shadow: 50px 50px 100px 10px rgb(0, 0, 0, 0.1);
-  --card-shadow: 0px 2px 4px 0px rgb(0, 0, 0, 0.05);
-
-  /* stroke */
-  --border-in-light: 1px solid rgb(222, 222, 222);
+  /* Shadows - Pharmaceutical Style */
+  --shadow: 0 10px 30px rgba(0, 107, 125, 0.08);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 6px rgba(0, 107, 125, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 10px 20px rgba(0, 107, 125, 0.15), 0 3px 6px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 40px rgba(0, 107, 125, 0.2), 0 5px 10px rgba(0, 0, 0, 0.15);
+  --card-shadow: var(--shadow-md);
+  
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, #006B7D 0%, #00BCD4 100%);
+  --gradient-dark: linear-gradient(135deg, #1A237E 0%, #006B7D 100%);
+  --gradient-surface: linear-gradient(180deg, #FAFAFA 0%, #ECEFF1 100%);
 }
 
 @mixin dark {
   --theme: dark;
 
-  /* color */
-  --white: rgb(30, 30, 30);
-  --black: rgb(187, 187, 187);
-  --gray: rgb(21, 21, 21);
-  --primary: rgb(29, 147, 171);
-  --second: rgb(27 38 42);
-  --hover-color: #323232;
-
-  --bar-color: rgba(255, 255, 255, 0.1);
-
-  --border-in-light: 1px solid rgba(255, 255, 255, 0.192);
-
+  /* EvidenceSeek Dark Mode - Professional Medical */
+  --white: #121212; /* Dark Surface */
+  --black: #FFFFFF; /* White text */
+  --gray: #1E1E1E; /* Elevated Surface */
+  --primary: #00BCD4; /* Brighter Cyan for dark */
+  --secondary: #006B7D; /* Teal for dark */
+  --accent: #9C27B0; /* Brighter Purple */
+  --second: #1A2528; /* Dark Cyan tint */
+  --hover-color: #2D2D2D;
+  --bar-color: rgba(0, 188, 212, 0.15);
   --theme-color: var(--gray);
+  
+  /* Status Colors (adjusted for dark) */
+  --success: #66BB6A;
+  --warning: #FFA726;
+  --error: #EF5350;
+  --info: #29B6F6;
+  
+  /* Text Colors */
+  --text-primary: #FFFFFF;
+  --text-secondary: #B0B0B0;
+  --text-tertiary: #808080;
+  --text-link: #00BCD4;
+  
+  /* Border Colors */
+  --border-color: #2D2D2D;
+  --border-in-light: 1px solid rgba(255, 255, 255, 0.12);
+  --border-focus: 2px solid #00BCD4;
+
+  /* Shadows - Dark Mode */
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.4), 0 3px 6px rgba(0, 0, 0, 0.3);
+  --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.5), 0 5px 10px rgba(0, 0, 0, 0.4);
+  --card-shadow: var(--shadow-md);
+  
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, #00BCD4 0%, #006B7D 100%);
+  --gradient-dark: linear-gradient(135deg, #1A237E 0%, #006B7D 100%);
+  --gradient-surface: linear-gradient(180deg, #1E1E1E 0%, #2D2D2D 100%);
 
   div:not(.no-dark) > svg {
-    filter: invert(0.5);
+    filter: invert(0.85) hue-rotate(180deg);
   }
 }
 

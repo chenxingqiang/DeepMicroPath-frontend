@@ -1,0 +1,10 @@
+<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Gray background for generic file -->
+  <rect width="40" height="40" rx="2" fill="#5B5B5B"/>
+  <!-- Document icon -->
+  <path d="M14 8H22L28 14V32H14V8Z" fill="white"/>
+  <path d="M22 8V14H28" fill="#5B5B5B" stroke="white" stroke-width="1"/>
+  <line x1="17" y1="18" x2="25" y2="18" stroke="#5B5B5B" stroke-width="1.5"/>
+  <line x1="17" y1="22" x2="25" y2="22" stroke="#5B5B5B" stroke-width="1.5"/>
+  <line x1="17" y1="26" x2="22" y2="26" stroke="#5B5B5B" stroke-width="1.5"/>
+</svg>

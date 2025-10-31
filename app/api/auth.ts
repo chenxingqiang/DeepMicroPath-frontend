@@ -104,6 +104,12 @@ export function auth(req: NextRequest, modelProvider: ModelProvider) {
       case ModelProvider.SiliconFlow:
         systemApiKey = serverConfig.siliconFlowApiKey;
         break;
+      case ModelProvider["302.AI"]:
+        systemApiKey = serverConfig.ai302ApiKey;
+        break;
+      case ModelProvider.DeepMicroPath:
+        systemApiKey = serverConfig.deepmicropathApiKey;
+        break;
       case ModelProvider.GPT:
       default:
         if (req.nextUrl.pathname.includes("azure/deployments")) {

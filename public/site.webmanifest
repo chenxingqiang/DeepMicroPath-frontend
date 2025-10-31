@@ -1,6 +1,7 @@
 {
-  "name": "NextChat",
-  "short_name": "NextChat",
+  "name": "DeepMicroPath",
+  "short_name": "DeepMicroPath",
+  "description": "AI-Powered Microbiology Analysis Platform",
   "icons": [
     {
       "src": "/android-chrome-192x192.png",
@@ -14,7 +15,7 @@
     }
   ],
   "start_url": "/",
-  "theme_color": "#ffffff",
+  "theme_color": "#006B7D",
   "background_color": "#ffffff",
   "display": "standalone"
 }

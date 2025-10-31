@@ -141,10 +141,25 @@ export function base64Image2Blob(base64Data: string, contentType: string) {
   return new Blob([byteArray], { type: contentType });
 }
 
+export function readFileAsDataURL(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      resolve(e.target?.result as string);
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
 export function uploadImage(file: Blob): Promise<string> {
   if (!window._SW_ENABLED) {
-    // if serviceWorker register error, using compressImage
-    return compressImage(file, 256 * 1024);
+    // Check if it's an image file
+    if (file.type.startsWith("image/")) {
+      return compressImage(file, 256 * 1024);
+    }
+    // For non-image files, read directly as data URL
+    return readFileAsDataURL(file as File);
   }
   const body = new FormData();
   body.append("file", file);

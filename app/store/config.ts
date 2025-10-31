@@ -64,8 +64,8 @@ export const DEFAULT_CONFIG = {
   models: DEFAULT_MODELS as any as LLMModel[],
 
   modelConfig: {
-    model: "gpt-4o-mini" as ModelType,
-    providerName: "OpenAI" as ServiceProvider,
+    model: "deepmicropath-chat" as ModelType,
+    providerName: "DeepMicroPath" as ServiceProvider,
     temperature: 0.5,
     top_p: 1,
     max_tokens: 4000,
@@ -195,20 +195,20 @@ export const useAppConfig = createPersistStore(
   }),
   {
     name: StoreKey.Config,
-    version: 4.1,
+    version: 5.0,
 
     merge(persistedState, currentState) {
       const state = persistedState as ChatConfig | undefined;
       if (!state) return { ...currentState };
-      const models = currentState.models.slice();
-      state.models.forEach((pModel) => {
-        const idx = models.findIndex(
-          (v) => v.name === pModel.name && v.provider === pModel.provider,
-        );
-        if (idx !== -1) models[idx] = pModel;
-        else models.push(pModel);
-      });
-      return { ...currentState, ...state, models: models };
+
+      // After migration, use the migrated models
+      // Otherwise merge with current state
+      const models =
+        state.models && state.models.length > 0
+          ? state.models
+          : currentState.models;
+
+      return { ...currentState, ...state, models };
     },
 
     migrate(persistedState, version) {
@@ -253,6 +253,14 @@ export const useAppConfig = createPersistStore(
           DEFAULT_CONFIG.modelConfig.compressModel;
         state.modelConfig.compressProviderName =
           DEFAULT_CONFIG.modelConfig.compressProviderName;
+      }
+
+      // Version 5.0: Clear all models and use only DeepMicroPath models
+      if (version < 5.0) {
+        state.models = DEFAULT_MODELS as any as LLMModel[];
+        state.modelConfig.model = "deepmicropath-chat" as any;
+        state.modelConfig.providerName = "DeepMicroPath" as any;
+        state.customModels = ""; // Clear custom models
       }
 
       return state as any;

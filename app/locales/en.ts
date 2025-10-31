@@ -28,7 +28,7 @@ const en: LocaleType = {
     Later: "Later",
     SaasTips: "Too Complex, Use Immediately Now",
     TopTips:
-      "🥳 NextChat AI launch promotion: Instantly unlock the latest models like OpenAI o1, GPT-4o, Claude-3.5!",
+      "🥳 EvidenceSeek: AI-powered microbiology analysis and research platform",
   },
   ChatItem: {
     ChatItemCount: (count: number) => `${count} messages`,
@@ -315,11 +315,11 @@ const en: LocaleType = {
     },
     Access: {
       SaasStart: {
-        Title: "Use NextChat AI",
-        Label: " (Most Cost-Effective Option)",
+        Title: "Use EvidenceSeek",
+        Label: " (AI-Powered Analysis)",
         SubTitle:
-          "Maintained by NextChat, zero setup needed, unlock OpenAI o1, GPT-4o," +
-          " Claude-3.5 and more",
+          "DeepMicroPath backend, zero setup needed, microbiology analysis" +
+          " and research capabilities",
         ChatNow: "Start Now",
       },
       AccessCode: {

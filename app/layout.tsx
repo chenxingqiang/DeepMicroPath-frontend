@@ -9,11 +9,19 @@ import { GoogleTagManager, GoogleAnalytics } from "@next/third-parties/google";
 import { getServerSideConfig } from "./config/server";
 
 export const metadata: Metadata = {
-  title: "NextChat",
-  description: "Your personal ChatGPT Chat Bot.",
+  title: "DeepMicroPath",
+  description:
+    "AI-powered microbiology analysis and research platform for comprehensive pathogen detection and interpretation.",
   appleWebApp: {
-    title: "NextChat",
+    title: "DeepMicroPath",
     statusBarStyle: "default",
+  },
+  icons: {
+    icon: [
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+    ],
+    apple: "/apple-touch-icon.png",
   },
 };
 
@@ -22,8 +30,8 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#fafafa" },
-    { media: "(prefers-color-scheme: dark)", color: "#151515" },
+    { media: "(prefers-color-scheme: light)", color: "#006B7D" },
+    { media: "(prefers-color-scheme: dark)", color: "#1A237E" },
   ],
 };
 

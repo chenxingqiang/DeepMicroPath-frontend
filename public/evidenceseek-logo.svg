@@ -1,0 +1,44 @@
+<svg width="200" height="60" viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- DNA Helix Icon -->
+  <g id="dna-helix">
+    <!-- Left strand -->
+    <path d="M8 10 Q 12 20, 8 30 Q 4 40, 8 50" stroke="url(#gradient1)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <!-- Right strand -->
+    <path d="M20 10 Q 16 20, 20 30 Q 24 40, 20 50" stroke="url(#gradient2)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    
+    <!-- Connecting bars (base pairs) -->
+    <line x1="8" y1="15" x2="20" y2="15" stroke="#00BCD4" stroke-width="1.5" opacity="0.8"/>
+    <line x1="10" y1="22" x2="18" y2="22" stroke="#006B7D" stroke-width="1.5" opacity="0.8"/>
+    <line x1="8" y1="30" x2="20" y2="30" stroke="#00BCD4" stroke-width="1.5" opacity="0.8"/>
+    <line x1="10" y1="38" x2="18" y2="38" stroke="#006B7D" stroke-width="1.5" opacity="0.8"/>
+    <line x1="8" y1="45" x2="20" y2="45" stroke="#00BCD4" stroke-width="1.5" opacity="0.8"/>
+    
+    <!-- Decorative molecules -->
+    <circle cx="8" cy="10" r="2" fill="#006B7D"/>
+    <circle cx="20" cy="10" r="2" fill="#00BCD4"/>
+    <circle cx="8" cy="50" r="2" fill="#006B7D"/>
+    <circle cx="20" cy="50" r="2" fill="#00BCD4"/>
+  </g>
+  
+  <!-- Wordmark "EvidenceSeek" -->
+  <text x="35" y="35" font-family="'Inter', 'SF Pro Display', sans-serif" font-size="22" font-weight="600" fill="#1A237E">
+    Evidence<tspan fill="#006B7D">Seek</tspan>
+  </text>
+  
+  <!-- Tagline -->
+  <text x="35" y="50" font-family="'Inter', sans-serif" font-size="9" font-weight="400" fill="#455A64" letter-spacing="0.5">
+    AI-POWERED MICROBIOLOGY ANALYSIS
+  </text>
+  
+  <!-- Gradients -->
+  <defs>
+    <linearGradient id="gradient1" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#006B7D;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#00BCD4;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="gradient2" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#00BCD4;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#006B7D;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+</svg>

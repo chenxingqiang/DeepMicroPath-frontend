@@ -1130,3 +1130,64 @@
 #dmermaid {
   display: none;
 }
+
+// Think block styling
+.markdown-body .think-block {
+  margin: 1em 0;
+  padding: 0;
+  border: 1px solid var(--color-border-default);
+  border-radius: 6px;
+  background-color: var(--color-canvas-subtle);
+  overflow: hidden;
+
+  summary {
+    padding: 0.75em 1em;
+    font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+    background-color: var(--color-neutral-muted);
+    transition: background-color 0.2s ease;
+    list-style: none;
+    display: flex;
+    align-items: center;
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+
+    &::before {
+      content: "▶";
+      display: inline-block;
+      margin-right: 0.5em;
+      transition: transform 0.2s ease;
+      font-size: 0.8em;
+    }
+
+    &:hover {
+      background-color: var(--color-border-muted);
+    }
+  }
+
+  &[open] summary::before {
+    transform: rotate(90deg);
+  }
+
+  // Content area when expanded
+  &[open] {
+    padding-bottom: 1em;
+  }
+
+  // Style the content inside
+  > :not(summary) {
+    padding: 0 1em;
+    margin-top: 0.5em;
+  }
+
+  p:first-of-type {
+    margin-top: 0.5em;
+  }
+
+  p:last-of-type {
+    margin-bottom: 0.5em;
+  }
+}

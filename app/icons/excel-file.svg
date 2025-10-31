@@ -1,0 +1,6 @@
+<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Excel green background -->
+  <rect width="40" height="40" rx="2" fill="#217346"/>
+  <!-- White X -->
+  <path d="M12 10L18 20L12 30H16L20 23L24 30H28L22 20L28 10H24L20 17L16 10H12Z" fill="white"/>
+</svg>

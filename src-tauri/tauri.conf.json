@@ -8,8 +8,8 @@
     "withGlobalTauri": true
   },
   "package": {
-    "productName": "NextChat",
-    "version": "2.16.1"
+    "productName": "EvidenceSeek",
+    "version": "1.0.0"
   },
   "tauri": {
     "allowlist": {
@@ -72,8 +72,8 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.yida.chatgpt.next.web",
-      "longDescription": "NextChat is a cross-platform ChatGPT client, including Web/Win/Linux/OSX/PWA.",
+      "identifier": "com.turingai.evidenceseek",
+      "longDescription": "EvidenceSeek is an AI-powered microbiology analysis and research platform based on DeepMicroPath.",
       "macOS": {
         "entitlements": null,
         "exceptionDomain": "",
@@ -82,7 +82,7 @@
         "signingIdentity": null
       },
       "resources": [],
-      "shortDescription": "NextChat App",
+      "shortDescription": "EvidenceSeek App",
       "targets": "all",
       "windows": {
         "certificateThumbprint": null,
@@ -97,7 +97,7 @@
     "updater": {
       "active": true,
       "endpoints": [
-        "https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web/releases/latest/download/latest.json"
+        "https://github.com/chenxingqiang/DeepMicroPath/releases/latest/download/latest.json"
       ],
       "dialog": true,
       "windows": {
@@ -110,7 +110,7 @@
         "fullscreen": false,
         "height": 600,
         "resizable": true,
-        "title": "NextChat",
+        "title": "EvidenceSeek",
         "width": 960,
         "hiddenTitle": true,
         "titleBarStyle": "Overlay"

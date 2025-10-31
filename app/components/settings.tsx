@@ -9,7 +9,6 @@ import CopyIcon from "../icons/copy.svg";
 import ClearIcon from "../icons/clear.svg";
 import LoadingIcon from "../icons/three-dots.svg";
 import EditIcon from "../icons/edit.svg";
-import FireIcon from "../icons/fire.svg";
 import EyeIcon from "../icons/eye.svg";
 import DownloadIcon from "../icons/download.svg";
 import UploadIcon from "../icons/upload.svg";
@@ -19,7 +18,6 @@ import ConfirmIcon from "../icons/confirm.svg";
 import ConnectionIcon from "../icons/connection.svg";
 import CloudSuccessIcon from "../icons/cloud-success.svg";
 import CloudFailIcon from "../icons/cloud-fail.svg";
-import { trackSettingsPageGuideToCPaymentClick } from "../utils/auth-settings-events";
 import {
   Input,
   List,
@@ -52,30 +50,13 @@ import Locale, {
 import { copyToClipboard, clientUpdate, semverCompare } from "../utils";
 import Link from "next/link";
 import {
-  Anthropic,
-  Azure,
-  Baidu,
-  Tencent,
-  ByteDance,
-  Alibaba,
-  Moonshot,
-  XAI,
-  Google,
-  GoogleSafetySettingsThreshold,
-  OPENAI_BASE_URL,
   Path,
   RELEASE_URL,
   STORAGE_KEY,
   ServiceProvider,
   SlotID,
   UPDATE_URL,
-  Stability,
-  Iflytek,
-  SAAS_CHAT_URL,
-  ChatGLM,
-  DeepSeek,
-  SiliconFlow,
-  AI302,
+  DEEPMICROPATH_BASE_URL,
 } from "../constant";
 import { Prompt, SearchService, usePromptStore } from "../store/prompt";
 import { ErrorBoundary } from "./error";
@@ -605,19 +586,7 @@ export function Settings() {
   }
 
   const accessStore = useAccessStore();
-  const shouldHideBalanceQuery = useMemo(() => {
-    const isOpenAiUrl = accessStore.openaiUrl.includes(OPENAI_BASE_URL);
-
-    return (
-      accessStore.hideBalanceQuery ||
-      isOpenAiUrl ||
-      accessStore.provider === ServiceProvider.Azure
-    );
-  }, [
-    accessStore.hideBalanceQuery,
-    accessStore.openaiUrl,
-    accessStore.provider,
-  ]);
+  const shouldHideBalanceQuery = true; // Always hide balance query for DeepMicroPath
 
   const usage = {
     used: updateStore.used,
@@ -694,82 +663,45 @@ export function Settings() {
     </ListItem>
   );
 
-  const saasStartComponent = (
-    <ListItem
-      className={styles["subtitle-button"]}
-      title={
-        Locale.Settings.Access.SaasStart.Title +
-        `${Locale.Settings.Access.SaasStart.Label}`
-      }
-      subTitle={Locale.Settings.Access.SaasStart.SubTitle}
-    >
-      <IconButton
-        aria={
-          Locale.Settings.Access.SaasStart.Title +
-          Locale.Settings.Access.SaasStart.ChatNow
-        }
-        icon={<FireIcon />}
-        type={"primary"}
-        text={Locale.Settings.Access.SaasStart.ChatNow}
-        onClick={() => {
-          trackSettingsPageGuideToCPaymentClick();
-          window.location.href = SAAS_CHAT_URL;
-        }}
-      />
-    </ListItem>
-  );
+  // Hide SaaS component for DeepMicroPath
+  const saasStartComponent = null;
 
-  const useCustomConfigComponent = // Conditionally render the following ListItem based on clientConfig.isApp
-    !clientConfig?.isApp && ( // only show if isApp is false
-      <ListItem
-        title={Locale.Settings.Access.CustomEndpoint.Title}
-        subTitle={Locale.Settings.Access.CustomEndpoint.SubTitle}
-      >
-        <input
-          aria-label={Locale.Settings.Access.CustomEndpoint.Title}
-          type="checkbox"
-          checked={accessStore.useCustomConfig}
-          onChange={(e) =>
-            accessStore.update(
-              (access) => (access.useCustomConfig = e.currentTarget.checked),
-            )
-          }
-        ></input>
-      </ListItem>
-    );
+  // Always use custom config for DeepMicroPath
+  const useCustomConfigComponent = null;
 
-  const openAIConfigComponent = accessStore.provider ===
-    ServiceProvider.OpenAI && (
+  // DeepMicroPath Configuration Component
+  const deepmicropathConfigComponent = accessStore.provider ===
+    ServiceProvider.DeepMicroPath && (
     <>
       <ListItem
-        title={Locale.Settings.Access.OpenAI.Endpoint.Title}
-        subTitle={Locale.Settings.Access.OpenAI.Endpoint.SubTitle}
+        title="DeepMicroPath API Endpoint"
+        subTitle="Backend API server URL (e.g., http://172.20.1.38:8000/api/v1)"
       >
         <input
-          aria-label={Locale.Settings.Access.OpenAI.Endpoint.Title}
+          aria-label="DeepMicroPath API Endpoint"
           type="text"
-          value={accessStore.openaiUrl}
-          placeholder={OPENAI_BASE_URL}
+          value={accessStore.deepmicropathUrl}
+          placeholder={DEEPMICROPATH_BASE_URL}
           onChange={(e) =>
             accessStore.update(
-              (access) => (access.openaiUrl = e.currentTarget.value),
+              (access) => (access.deepmicropathUrl = e.currentTarget.value),
             )
           }
         ></input>
       </ListItem>
       <ListItem
-        title={Locale.Settings.Access.OpenAI.ApiKey.Title}
-        subTitle={Locale.Settings.Access.OpenAI.ApiKey.SubTitle}
+        title="DeepMicroPath API Key"
+        subTitle="Optional API key for authentication (leave empty if not required)"
       >
         <PasswordInput
-          aria={Locale.Settings.ShowPassword}
-          aria-label={Locale.Settings.Access.OpenAI.ApiKey.Title}
-          value={accessStore.openaiApiKey}
+          aria="Show/Hide Password"
+          aria-label="DeepMicroPath API Key"
+          value={accessStore.deepmicropathApiKey}
           type="text"
-          placeholder={Locale.Settings.Access.OpenAI.ApiKey.Placeholder}
+          placeholder="Optional API Key"
           onChange={(e) => {
             accessStore.update(
-              (access) => (access.openaiApiKey = e.currentTarget.value),
+              (access) => (access.deepmicropathApiKey = e.currentTarget.value),
             );
           }}
         />
@@ -777,8 +709,8 @@ export function Settings() {
     </>
   );
 
-  const azureConfigComponent = accessStore.provider ===
-    ServiceProvider.Azure && (
+  // All other provider configs removed - only DeepMicroPath supported
+  const azureConfigComponent = false && (
     <>
       <ListItem
         title={Locale.Settings.Access.Azure.Endpoint.Title}
@@ -833,8 +765,7 @@ export function Settings() {
     </>
   );
 
-  const googleConfigComponent = accessStore.provider ===
-    ServiceProvider.Google && (
+  const googleConfigComponent = false && (
     <>
       <ListItem
         title={Locale.Settings.Access.Google.Endpoint.Title}
@@ -912,8 +843,7 @@ export function Settings() {
     </>
   );
 
-  const anthropicConfigComponent = accessStore.provider ===
-    ServiceProvider.Anthropic && (
+  const anthropicConfigComponent = false && (
     <>
       <ListItem
         title={Locale.Settings.Access.Anthropic.Endpoint.Title}
@@ -969,8 +899,7 @@ export function Settings() {
     </>
   );
 
-  const baiduConfigComponent = accessStore.provider ===
-    ServiceProvider.Baidu && (
+  const baiduConfigComponent = false && (
     <>
       <ListItem
         title={Locale.Settings.Access.Baidu.Endpoint.Title}
@@ -1023,8 +952,7 @@ export function Settings() {
     </>
   );
 
-  const tencentConfigComponent = accessStore.provider ===
-    ServiceProvider.Tencent && (
+  const tencentConfigComponent = false && (
     <>
       <ListItem
         title={Locale.Settings.Access.Tencent.Endpoint.Title}
@@ -1077,8 +1005,7 @@ export function Settings() {
     </>
   );
 
-  const byteDanceConfigComponent = accessStore.provider ===
-    ServiceProvider.ByteDance && (
+  const byteDanceConfigComponent = false && (
     <>
       <ListItem
         title={Locale.Settings.Access.ByteDance.Endpoint.Title}
@@ -1118,8 +1045,7 @@ export function Settings() {
     </>
   );
 
-  const alibabaConfigComponent = accessStore.provider ===
-    ServiceProvider.Alibaba && (
+  const alibabaConfigComponent = false && (
     <>
       <ListItem
         title={Locale.Settings.Access.Alibaba.Endpoint.Title}
@@ -1159,8 +1085,7 @@ export function Settings() {
     </>
   );
 
-  const moonshotConfigComponent = accessStore.provider ===
-    ServiceProvider.Moonshot && (
+  const moonshotConfigComponent = false && (
     <>
       <ListItem
         title={Locale.Settings.Access.Moonshot.Endpoint.Title}
@@ -1200,8 +1125,7 @@ export function Settings() {
     </>
   );
 
-  const deepseekConfigComponent = accessStore.provider ===
-    ServiceProvider.DeepSeek && (
+  const deepseekConfigComponent = false && (
     <>
       <ListItem
         title={Locale.Settings.Access.DeepSeek.Endpoint.Title}
@@ -1241,7 +1165,7 @@ export function Settings() {
     </>
   );
 
-  const XAIConfigComponent = accessStore.provider === ServiceProvider.XAI && (
+  const XAIConfigComponent = false && (
     <>
       <ListItem
         title={Locale.Settings.Access.XAI.Endpoint.Title}
@@ -1280,8 +1204,7 @@ export function Settings() {
     </>
   );
 
-  const chatglmConfigComponent = accessStore.provider ===
-    ServiceProvider.ChatGLM && (
+  const chatglmConfigComponent = false && (
     <>
       <ListItem
         title={Locale.Settings.Access.ChatGLM.Endpoint.Title}
@@ -1320,8 +1243,7 @@ export function Settings() {
       </ListItem>
     </>
   );
-  const siliconflowConfigComponent = accessStore.provider ===
-    ServiceProvider.SiliconFlow && (
+  const siliconflowConfigComponent = false && (
     <>
       <ListItem
         title={Locale.Settings.Access.SiliconFlow.Endpoint.Title}
@@ -1361,8 +1283,7 @@ export function Settings() {
     </>
   );
 
-  const stabilityConfigComponent = accessStore.provider ===
-    ServiceProvider.Stability && (
+  const stabilityConfigComponent = false && (
     <>
       <ListItem
         title={Locale.Settings.Access.Stability.Endpoint.Title}
@@ -1401,8 +1322,7 @@ export function Settings() {
       </ListItem>
     </>
   );
-  const lflytekConfigComponent = accessStore.provider ===
-    ServiceProvider.Iflytek && (
+  const lflytekConfigComponent = false && (
     <>
       <ListItem
         title={Locale.Settings.Access.Iflytek.Endpoint.Title}
@@ -1459,44 +1379,43 @@ export function Settings() {
     </>
   );
 
-  const ai302ConfigComponent = accessStore.provider === ServiceProvider["302.AI"] && (
+  const ai302ConfigComponent = false && (
     <>
       <ListItem
-          title={Locale.Settings.Access.AI302.Endpoint.Title}
-          subTitle={
-            Locale.Settings.Access.AI302.Endpoint.SubTitle +
-            AI302.ExampleEndpoint
+        title={Locale.Settings.Access.AI302.Endpoint.Title}
+        subTitle={
+          Locale.Settings.Access.AI302.Endpoint.SubTitle + AI302.ExampleEndpoint
+        }
+      >
+        <input
+          aria-label={Locale.Settings.Access.AI302.Endpoint.Title}
+          type="text"
+          value={accessStore.ai302Url}
+          placeholder={AI302.ExampleEndpoint}
+          onChange={(e) =>
+            accessStore.update(
+              (access) => (access.ai302Url = e.currentTarget.value),
+            )
           }
-        >
-          <input
-            aria-label={Locale.Settings.Access.AI302.Endpoint.Title}
-            type="text"
-            value={accessStore.ai302Url}
-            placeholder={AI302.ExampleEndpoint}
-            onChange={(e) =>
-              accessStore.update(
-                (access) => (access.ai302Url = e.currentTarget.value),
-              )
-            }
-          ></input>
-        </ListItem>
-        <ListItem
-          title={Locale.Settings.Access.AI302.ApiKey.Title}
-          subTitle={Locale.Settings.Access.AI302.ApiKey.SubTitle}
-        >
-          <PasswordInput
-            aria-label={Locale.Settings.Access.AI302.ApiKey.Title}
-            value={accessStore.ai302ApiKey}
-            type="text"
-            placeholder={Locale.Settings.Access.AI302.ApiKey.Placeholder}
-            onChange={(e) => {
-              accessStore.update(
-                (access) => (access.ai302ApiKey = e.currentTarget.value),
-              );
-            }}
-          />
-        </ListItem>
-      </>
+        ></input>
+      </ListItem>
+      <ListItem
+        title={Locale.Settings.Access.AI302.ApiKey.Title}
+        subTitle={Locale.Settings.Access.AI302.ApiKey.SubTitle}
+      >
+        <PasswordInput
+          aria-label={Locale.Settings.Access.AI302.ApiKey.Title}
+          value={accessStore.ai302ApiKey}
+          type="text"
+          placeholder={Locale.Settings.Access.AI302.ApiKey.Placeholder}
+          onChange={(e) => {
+            accessStore.update(
+              (access) => (access.ai302ApiKey = e.currentTarget.value),
+            );
+          }}
+        />
+      </ListItem>
+    </>
   );
 
   return (
@@ -1816,84 +1735,12 @@ export function Settings() {
         </List>
 
         <List id={SlotID.CustomModel}>
-          {saasStartComponent}
-          {accessCodeComponent}
+          <ListItem
+            title="API Configuration"
+            subTitle="Configure your Deep MicroPath backend API"
+          ></ListItem>
 
-          {!accessStore.hideUserApiKey && (
-            <>
-              {useCustomConfigComponent}
-
-              {accessStore.useCustomConfig && (
-                <>
-                  <ListItem
-                    title={Locale.Settings.Access.Provider.Title}
-                    subTitle={Locale.Settings.Access.Provider.SubTitle}
-                  >
-                    <Select
-                      aria-label={Locale.Settings.Access.Provider.Title}
-                      value={accessStore.provider}
-                      onChange={(e) => {
-                        accessStore.update(
-                          (access) =>
-                            (access.provider = e.target
-                              .value as ServiceProvider),
-                        );
-                      }}
-                    >
-                      {Object.entries(ServiceProvider).map(([k, v]) => (
-                        <option value={v} key={k}>
-                          {k}
-                        </option>
-                      ))}
-                    </Select>
-                  </ListItem>
-
-                  {openAIConfigComponent}
-                  {azureConfigComponent}
-                  {googleConfigComponent}
-                  {anthropicConfigComponent}
-                  {baiduConfigComponent}
-                  {byteDanceConfigComponent}
-                  {alibabaConfigComponent}
-                  {tencentConfigComponent}
-                  {moonshotConfigComponent}
-                  {deepseekConfigComponent}
-                  {stabilityConfigComponent}
-                  {lflytekConfigComponent}
-                  {XAIConfigComponent}
-                  {chatglmConfigComponent}
-                  {siliconflowConfigComponent}
-                  {ai302ConfigComponent}
-                </>
-              )}
-            </>
-          )}
-
-          {!shouldHideBalanceQuery && !clientConfig?.isApp ? (
-            <ListItem
-              title={Locale.Settings.Usage.Title}
-              subTitle={
-                showUsage
-                  ? loadingUsage
-                    ? Locale.Settings.Usage.IsChecking
-                    : Locale.Settings.Usage.SubTitle(
-                        usage?.used ?? "[?]",
-                        usage?.subscription ?? "[?]",
-                      )
-                  : Locale.Settings.Usage.NoAccess
-              }
-            >
-              {!showUsage || loadingUsage ? (
-                <div />
-              ) : (
-                <IconButton
-                  icon={<ResetIcon></ResetIcon>}
-                  text={Locale.Settings.Usage.Check}
-                  onClick={() => checkUsage(true)}
-                />
-              )}
-            </ListItem>
-          ) : null}
+          {deepmicropathConfigComponent}
 
           <ListItem
             title={Locale.Settings.Access.CustomModel.Title}

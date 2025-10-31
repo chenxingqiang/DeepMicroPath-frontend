@@ -1,0 +1,33 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <rect width="64" height="64" rx="12" fill="url(#bgGradient)"/>
+  
+  <!-- DNA Helix Icon (centered and larger) -->
+  <g id="dna-helix" transform="translate(16, 8)">
+    <!-- Left strand -->
+    <path d="M4 4 Q 10 16, 4 28 Q -2 40, 4 52" stroke="#FFFFFF" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    <!-- Right strand -->
+    <path d="M28 4 Q 22 16, 28 28 Q 34 40, 28 52" stroke="#FFFFFF" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    
+    <!-- Connecting bars (base pairs) -->
+    <line x1="6" y1="10" x2="26" y2="10" stroke="#00BCD4" stroke-width="2.5" opacity="0.9"/>
+    <line x1="8" y1="18" x2="24" y2="18" stroke="#FFFFFF" stroke-width="2.5" opacity="0.7"/>
+    <line x1="4" y1="28" x2="28" y2="28" stroke="#00BCD4" stroke-width="2.5" opacity="0.9"/>
+    <line x1="8" y1="38" x2="24" y2="38" stroke="#FFFFFF" stroke-width="2.5" opacity="0.7"/>
+    <line x1="6" y1="46" x2="26" y2="46" stroke="#00BCD4" stroke-width="2.5" opacity="0.9"/>
+    
+    <!-- Decorative molecules -->
+    <circle cx="4" cy="4" r="3" fill="#FFFFFF"/>
+    <circle cx="28" cy="4" r="3" fill="#00BCD4"/>
+    <circle cx="4" cy="52" r="3" fill="#FFFFFF"/>
+    <circle cx="28" cy="52" r="3" fill="#00BCD4"/>
+  </g>
+  
+  <!-- Gradients -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#006B7D;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1A237E;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+</svg>

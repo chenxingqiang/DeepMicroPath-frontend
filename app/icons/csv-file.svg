@@ -1,0 +1,11 @@
+<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Green background similar to Excel -->
+  <rect width="40" height="40" rx="2" fill="#0E7C46"/>
+  <!-- White CSV text -->
+  <text x="20" y="26" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="white" text-anchor="middle">CSV</text>
+  <!-- Table grid icon -->
+  <rect x="10" y="8" width="20" height="6" fill="none" stroke="white" stroke-width="1.5"/>
+  <line x1="10" y1="11" x2="30" y2="11" stroke="white" stroke-width="1"/>
+  <line x1="17" y1="8" x2="17" y2="14" stroke="white" stroke-width="1"/>
+  <line x1="23" y1="8" x2="23" y2="14" stroke="white" stroke-width="1"/>
+</svg>

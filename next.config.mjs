@@ -100,6 +100,10 @@ if (mode !== "export") {
         source: "/api/proxy/alibaba/:path*",
         destination: "https://dashscope.aliyuncs.com/api/:path*",
       },
+      {
+        source: "/api/deepmicropath/:path*",
+        destination: "http://172.20.1.38:8000/api/v1/:path*",
+      },
     ];
 
     return {

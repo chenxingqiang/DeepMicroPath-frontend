@@ -1,11 +1,11 @@
 [package]
-name = "nextchat"
-version = "0.1.0"
-description = "A cross platform app for LLM ChatBot."
-authors = ["Yidadaa"]
+name = "evidenceseek"
+version = "1.0.0"
+description = "AI-powered microbiology analysis and research platform."
+authors = ["TuringAI"]
 license = "mit"
-repository = ""
-default-run = "nextchat"
+repository = "https://github.com/chenxingqiang/DeepMicroPath"
+default-run = "evidenceseek"
 edition = "2021"
 rust-version = "1.60"
 

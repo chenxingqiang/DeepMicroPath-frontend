@@ -5,6 +5,7 @@ import RemarkBreaks from "remark-breaks";
 import RehypeKatex from "rehype-katex";
 import RemarkGfm from "remark-gfm";
 import RehypeHighlight from "rehype-highlight";
+import RehypeRaw from "rehype-raw";
 import { useRef, useState, RefObject, useEffect, useMemo } from "react";
 import { copyToClipboard, useWindowSize } from "../utils";
 import mermaid from "mermaid";
@@ -246,6 +247,14 @@ function escapeBrackets(text: string) {
   );
 }
 
+function processThinkBlocks(text: string) {
+  // Convert <think>...</think> to collapsible markdown format
+  return text.replace(/<think>([\s\S]*?)<\/think>/gi, (match, content) => {
+    // Wrap think content in a details/summary block
+    return `\n<details class="think-block">\n<summary>💭 Thinking Process</summary>\n\n${content.trim()}\n\n</details>\n`;
+  });
+}
+
 function tryWrapHtmlCode(text: string) {
   // try add wrap html code (fixed: html codeblock include 2 newline)
   // ignore embed codeblock
@@ -269,13 +278,16 @@ function tryWrapHtmlCode(text: string) {
 
 function _MarkDownContent(props: { content: string }) {
   const escapedContent = useMemo(() => {
-    return tryWrapHtmlCode(escapeBrackets(props.content));
+    // Process think blocks first, then other transformations
+    const withThinkBlocks = processThinkBlocks(props.content);
+    return tryWrapHtmlCode(escapeBrackets(withThinkBlocks));
   }, [props.content]);
 
   return (
     <ReactMarkdown
       remarkPlugins={[RemarkMath, RemarkGfm, RemarkBreaks]}
       rehypePlugins={[
+        RehypeRaw, // Enable HTML parsing for <details> and other tags
         RehypeKatex,
         [
           RehypeHighlight,

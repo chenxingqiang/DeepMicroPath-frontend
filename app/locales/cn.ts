@@ -26,8 +26,7 @@ const cn = {
     Confirm: "确认",
     Later: "稍后再说",
     SaasTips: "配置太麻烦，想要立即使用",
-    TopTips:
-      "🥳 NextChat AI 首发优惠，立刻解锁 OpenAI o1, GPT-4o, Claude-3.5 等最新大模型",
+    TopTips: "🥳 EvidenceSeek：AI驱动的微生物学分析和研究平台",
   },
   ChatItem: {
     ChatItemCount: (count: number) => `${count} 条对话`,
@@ -312,11 +311,11 @@ const cn = {
 
     Access: {
       SaasStart: {
-        Title: "使用 NextChat AI",
-        Label: "（性价比最高的方案）",
+        Title: "使用 EvidenceSeek",
+        Label: "（AI智能分析）",
         SubTitle:
-          "由 NextChat 官方维护, 零配置开箱即用，支持 OpenAI o1, GPT-4o, Claude-3.5 等最新大模型",
-        ChatNow: "立刻对话",
+          "基于 DeepMicroPath 后端, 零配置开箱即用，提供微生物学分析和研究能力",
+        ChatNow: "立刻开始",
       },
       AccessCode: {
         Title: "访问密码",

@@ -33,7 +33,11 @@ import PinIcon from "../icons/pin.svg";
 import ConfirmIcon from "../icons/confirm.svg";
 import CloseIcon from "../icons/close.svg";
 import CancelIcon from "../icons/cancel.svg";
-import ImageIcon from "../icons/image.svg";
+import AttachmentIcon from "../icons/attachment.svg";
+import ExcelIcon from "../icons/excel-file.svg";
+import CSVIcon from "../icons/csv-file.svg";
+import PDFIcon from "../icons/pdf-file.svg";
+import FileIcon from "../icons/file-generic.svg";
 
 import LightIcon from "../icons/light.svg";
 import DarkIcon from "../icons/dark.svg";
@@ -625,7 +629,7 @@ export function ChatActions(props: {
           <ChatAction
             onClick={props.uploadImage}
             text={Locale.Chat.InputActions.UploadImage}
-            icon={props.uploading ? <LoadingButtonIcon /> : <ImageIcon />}
+            icon={props.uploading ? <LoadingButtonIcon /> : <AttachmentIcon />}
           />
         )}
         <ChatAction
@@ -1561,7 +1565,7 @@ function _Chat() {
         const fileInput = document.createElement("input");
         fileInput.type = "file";
         fileInput.accept =
-          "image/png, image/jpeg, image/webp, image/heic, image/heif";
+          "image/png, image/jpeg, image/webp, image/heic, image/heif, .csv, .txt, .pdf, .xlsx, .xls";
         fileInput.multiple = true;
         fileInput.onchange = (event: any) => {
           setUploading(true);
@@ -2096,12 +2100,44 @@ function _Chat() {
                 {attachImages.length != 0 && (
                   <div className={styles["attach-images"]}>
                     {attachImages.map((image, index) => {
+                      // Detect if it's an image or other file
+                      const isImage = image.startsWith("data:image/");
+                      const isCSV =
+                        image.includes("text/csv") || image.includes("csv");
+                      const isPDF =
+                        image.includes("application/pdf") ||
+                        image.includes("pdf");
+                      const isExcel =
+                        image.includes("spreadsheet") ||
+                        image.includes("xlsx") ||
+                        image.includes("xls");
+
+                      // Choose icon component
+                      let FileIconComponent = FileIcon;
+                      if (isCSV) FileIconComponent = CSVIcon;
+                      else if (isPDF) FileIconComponent = PDFIcon;
+                      else if (isExcel) FileIconComponent = ExcelIcon;
+
                       return (
                         <div
                           key={index}
                           className={styles["attach-image"]}
-                          style={{ backgroundImage: `url("${image}")` }}
+                          style={
+                            isImage
+                              ? { backgroundImage: `url("${image}")` }
+                              : {
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  backgroundColor: "var(--white)",
+                                }
+                          }
                         >
+                          {!isImage && (
+                            <FileIconComponent
+                              style={{ width: "100%", height: "100%" }}
+                            />
+                          )}
                           <div className={styles["attach-image-mask"]}>
                             <DeleteImageButton
                               deleteImage={() => {
