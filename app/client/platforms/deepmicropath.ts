@@ -277,6 +277,7 @@ export class DeepMicroPathApi implements LLMApi {
         planning_port: config?.planning_port || 6001,
         max_rounds: config?.max_rounds,
         timeout: config?.timeout,
+        max_tokens: config?.max_tokens || 32000, // Prevent context overflow
         ...config,
       },
     };
@@ -479,6 +480,7 @@ export class DeepMicroPathApi implements LLMApi {
         planning_port: config?.planning_port ?? 6001,
         max_rounds: 1,
         timeout: 120,
+        max_tokens: config?.max_tokens ?? 8000, // Chat mode: shorter responses
       },
     };
 
