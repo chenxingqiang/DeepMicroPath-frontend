@@ -153,6 +153,74 @@ export class DeepMicroPathApi implements LLMApi {
   }
 
   /**
+   * Upload multiple files from base64 and return their URLs
+   */
+  async uploadFilesFromBase64(
+    files: Array<{ name: string; content: string }>,
+  ): Promise<string[]> {
+    const formData = new FormData();
+
+    // Convert each base64 file to Blob and add to FormData
+    for (const file of files) {
+      try {
+        // Decode base64
+        const binaryString = atob(file.content);
+        const bytes = new Uint8Array(binaryString.length);
+        for (let i = 0; i < binaryString.length; i++) {
+          bytes[i] = binaryString.charCodeAt(i);
+        }
+
+        // Create blob and file
+        const blob = new Blob([bytes]);
+        const fileObj = new File([blob], file.name);
+        formData.append("files", fileObj);
+      } catch (error) {
+        console.error(
+          `[DeepMicroPath] Error preparing file ${file.name}:`,
+          error,
+        );
+        throw error;
+      }
+    }
+
+    // Upload all files at once
+    const response = await fetch(`${this.baseUrl}/files/upload`, {
+      method: "POST",
+      headers: this.apiKey ? { Authorization: `Bearer ${this.apiKey}` } : {},
+      body: formData,
+    });
+
+    if (!response.ok) {
+      let errorMessage = response.statusText;
+      try {
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.includes("application/json")) {
+          const errorData = await response.json();
+          errorMessage = JSON.stringify(errorData, null, 2);
+        } else {
+          errorMessage = await response.text();
+        }
+      } catch (e) {
+        console.warn("[DeepMicroPath] Could not parse upload error:", e);
+      }
+      throw new Error(`File upload failed: ${errorMessage}`);
+    }
+
+    const result = await response.json();
+    console.log("[DeepMicroPath] Files uploaded:", result);
+
+    // Extract public URLs from uploaded files
+    const urls =
+      result.uploaded?.map((file: any) => file.public_url || file.url) || [];
+
+    if (urls.length === 0 && files.length > 0) {
+      throw new Error("No file URLs returned from upload");
+    }
+
+    return urls;
+  }
+
+  /**
    * List uploaded files
    */
   async listFiles(): Promise<UploadedFile[]> {
@@ -171,7 +239,7 @@ export class DeepMicroPathApi implements LLMApi {
 
   /**
    * Direct inference using Agent API sync endpoint
-   * This directly calls the Agent API /api/v1/inference/sync endpoint
+   * This directly calls the Agent API /api/v1/agent/inference/sync endpoint
    */
   async submitInferenceSync(
     question: string,
@@ -185,20 +253,35 @@ export class DeepMicroPathApi implements LLMApi {
       files: files.length,
     });
 
+    // Upload files first and get URLs
+    let fileUrls: string[] = [];
+    if (files.length > 0) {
+      try {
+        console.log("[DeepMicroPath] Uploading files first...");
+        fileUrls = await this.uploadFilesFromBase64(files);
+        console.log("[DeepMicroPath] Files uploaded:", fileUrls);
+      } catch (error) {
+        console.error("[DeepMicroPath] File upload failed:", error);
+        throw new Error(`File upload failed: ${(error as Error).message}`);
+      }
+    }
+
     const requestBody = {
       question,
       mode,
-      files: files.length > 0 ? files : undefined,
+      files: fileUrls.length > 0 ? fileUrls : undefined,
       config: {
         temperature: config?.temperature || 0.6,
         top_p: config?.top_p || 0.95,
         presence_penalty: config?.presence_penalty || 1.1,
         planning_port: config?.planning_port || 6001,
+        max_rounds: config?.max_rounds,
+        timeout: config?.timeout,
         ...config,
       },
     };
 
-    const response = await fetch(`${this.baseUrl}/inference/sync`, {
+    const response = await fetch(`${this.baseUrl}/agent/inference/sync`, {
       method: "POST",
       headers: this.getHeaders(),
       body: JSON.stringify(requestBody),
@@ -250,7 +333,7 @@ export class DeepMicroPathApi implements LLMApi {
    * Get job status
    */
   async getJobStatus(jobId: string): Promise<JobStatus> {
-    const response = await fetch(`${this.baseUrl}/inference/${jobId}`, {
+    const response = await fetch(`${this.baseUrl}/agent/inference/${jobId}`, {
       method: "GET",
       headers: this.getHeaders(),
     });
@@ -269,10 +352,13 @@ export class DeepMicroPathApi implements LLMApi {
    * Get job result
    */
   async getJobResult(jobId: string): Promise<JobResult> {
-    const response = await fetch(`${this.baseUrl}/inference/${jobId}/result`, {
-      method: "GET",
-      headers: this.getHeaders(),
-    });
+    const response = await fetch(
+      `${this.baseUrl}/agent/inference/${jobId}/result`,
+      {
+        method: "GET",
+        headers: this.getHeaders(),
+      },
+    );
 
     if (!response.ok) {
       if (response.status === 404) {
@@ -291,7 +377,7 @@ export class DeepMicroPathApi implements LLMApi {
    * Cancel a running job
    */
   async cancelJob(jobId: string): Promise<boolean> {
-    const response = await fetch(`${this.baseUrl}/inference/${jobId}`, {
+    const response = await fetch(`${this.baseUrl}/agent/inference/${jobId}`, {
       method: "DELETE",
       headers: this.getHeaders(),
     });
@@ -386,7 +472,6 @@ export class DeepMicroPathApi implements LLMApi {
     const requestBody = {
       question,
       mode: "default",
-      files: [],
       config: {
         temperature: config?.temperature ?? 0.7,
         top_p: config?.top_p ?? 0.95,
@@ -398,7 +483,7 @@ export class DeepMicroPathApi implements LLMApi {
     };
 
     // Call Agent API sync endpoint for reliability (fast path)
-    const response = await fetch(`${this.baseUrl}/inference/sync`, {
+    const response = await fetch(`${this.baseUrl}/agent/inference/sync`, {
       method: "POST",
       headers: this.getHeaders(),
       body: JSON.stringify(requestBody),
