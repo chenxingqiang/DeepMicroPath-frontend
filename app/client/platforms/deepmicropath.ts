@@ -131,7 +131,13 @@ export class DeepMicroPathApi implements LLMApi {
   ): Promise<string> {
     try {
       // Extract base64 data from data URL
-      const base64Data = dataUrl.split(",")[1];
+      let base64Data = dataUrl;
+      if (dataUrl.includes(",")) {
+        base64Data = dataUrl.split(",")[1];
+      }
+
+      // Remove any whitespace
+      base64Data = base64Data.replace(/\s/g, "");
 
       // Convert base64 to binary
       const binaryString = atob(base64Data);
@@ -163,8 +169,18 @@ export class DeepMicroPathApi implements LLMApi {
     // Convert each base64 file to Blob and add to FormData
     for (const file of files) {
       try {
+        let base64Data = file.content;
+
+        // Handle data URL format (data:image/png;base64,xxxxx)
+        if (base64Data.includes(",")) {
+          base64Data = base64Data.split(",")[1];
+        }
+
+        // Remove any whitespace
+        base64Data = base64Data.replace(/\s/g, "");
+
         // Decode base64
-        const binaryString = atob(file.content);
+        const binaryString = atob(base64Data);
         const bytes = new Uint8Array(binaryString.length);
         for (let i = 0; i < binaryString.length; i++) {
           bytes[i] = binaryString.charCodeAt(i);
@@ -179,7 +195,9 @@ export class DeepMicroPathApi implements LLMApi {
           `[DeepMicroPath] Error preparing file ${file.name}:`,
           error,
         );
-        throw error;
+        throw new Error(
+          `Failed to decode file ${file.name}: ${(error as Error).message}`,
+        );
       }
     }
 
@@ -238,8 +256,8 @@ export class DeepMicroPathApi implements LLMApi {
   }
 
   /**
-   * Direct inference using Agent API sync endpoint
-   * This directly calls the Agent API /api/v1/agent/inference/sync endpoint
+   * Direct inference using main API job submission endpoint
+   * Submits job to /api/v1/inference/submit and polls for completion
    */
   async submitInferenceSync(
     question: string,
@@ -247,45 +265,43 @@ export class DeepMicroPathApi implements LLMApi {
     files: Array<{ name: string; content: string }>,
     config?: Record<string, any>,
   ): Promise<any> {
-    console.log("[DeepMicroPath] Submitting sync inference:", {
+    console.log("[DeepMicroPath] Submitting inference job:", {
       question: question.substring(0, 100),
       mode,
       files: files.length,
     });
 
-    // Upload files first and get URLs
-    let fileUrls: string[] = [];
+    // Upload files first and get filenames
+    let inputFiles: string[] = [];
     if (files.length > 0) {
       try {
-        console.log("[DeepMicroPath] Uploading files first...");
-        fileUrls = await this.uploadFilesFromBase64(files);
-        console.log("[DeepMicroPath] Files uploaded:", fileUrls);
+        console.log("[DeepMicroPath] Uploading files...");
+        inputFiles = await this.uploadFilesFromBase64(files);
+        console.log("[DeepMicroPath] Files uploaded:", inputFiles);
       } catch (error) {
         console.error("[DeepMicroPath] File upload failed:", error);
         throw new Error(`File upload failed: ${(error as Error).message}`);
       }
     }
 
-    const requestBody = {
+    // Submit job
+    const submitBody = {
       question,
       mode,
-      files: fileUrls.length > 0 ? fileUrls : undefined,
-      config: {
+      input_files: inputFiles,
+      parameters: {
         temperature: config?.temperature || 0.6,
         top_p: config?.top_p || 0.95,
+        max_tokens: config?.max_tokens || 8000,
         presence_penalty: config?.presence_penalty || 1.1,
-        planning_port: config?.planning_port || 6001,
-        max_rounds: config?.max_rounds,
-        timeout: config?.timeout,
-        max_tokens: config?.max_tokens || 32000, // Prevent context overflow
         ...config,
       },
     };
 
-    const response = await fetch(`${this.baseUrl}/agent/inference/sync`, {
+    const response = await fetch(`${this.baseUrl}/inference/submit`, {
       method: "POST",
       headers: this.getHeaders(),
-      body: JSON.stringify(requestBody),
+      body: JSON.stringify(submitBody),
     });
 
     if (!response.ok) {
@@ -305,21 +321,82 @@ export class DeepMicroPathApi implements LLMApi {
       throw new Error(`Inference failed (${response.status}): ${errorMessage}`);
     }
 
-    const result = await response.json();
+    const submitResult = await response.json();
+    const jobId = submitResult.job_id;
 
-    if (result.status === "error") {
-      throw new Error(result.error || "Inference failed");
-    }
-
-    if (result.status !== "completed") {
-      throw new Error(`Unexpected status: ${result.status}`);
+    if (!jobId) {
+      throw new Error("No job_id returned from inference submission");
     }
 
     console.log(
-      "[DeepMicroPath] Inference completed:",
-      result.result?.metadata,
+      `[DeepMicroPath] Job submitted: ${jobId}, polling for result...`,
     );
-    return result;
+
+    // Poll for job completion
+    const maxAttempts = 300; // 5 minutes max (1 second per attempt)
+    let attempts = 0;
+    let finalResult = null;
+
+    while (attempts < maxAttempts) {
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait 1 second
+
+      const statusResponse = await fetch(`${this.baseUrl}/inference/${jobId}`, {
+        method: "GET",
+        headers: this.getHeaders(),
+      });
+
+      if (!statusResponse.ok) {
+        throw new Error(
+          `Failed to get job status: ${statusResponse.statusText}`,
+        );
+      }
+
+      const status = await statusResponse.json();
+      console.log(`[DeepMicroPath] Job ${jobId} status: ${status.status}`);
+
+      if (status.status === "COMPLETED") {
+        // Get result
+        const resultResponse = await fetch(
+          `${this.baseUrl}/inference/${jobId}/result`,
+          {
+            method: "GET",
+            headers: this.getHeaders(),
+          },
+        );
+
+        if (!resultResponse.ok) {
+          throw new Error(
+            `Failed to get job result: ${resultResponse.statusText}`,
+          );
+        }
+
+        finalResult = await resultResponse.json();
+        break;
+      } else if (status.status === "FAILED") {
+        throw new Error(status.error || "Job failed");
+      } else if (status.status === "CANCELED") {
+        throw new Error("Job was canceled");
+      }
+
+      attempts++;
+    }
+
+    if (!finalResult) {
+      throw new Error("Job did not complete within timeout (5 minutes)");
+    }
+
+    console.log("[DeepMicroPath] Inference completed:", finalResult);
+
+    // Format result to match expected structure
+    return {
+      status: "completed",
+      result: {
+        prediction: finalResult.result?.prediction || finalResult.result,
+        metadata: {
+          execution_time: finalResult.duration_seconds || 0,
+        },
+      },
+    };
   }
 
   /**
@@ -455,61 +532,118 @@ export class DeepMicroPathApi implements LLMApi {
   }
 
   /**
-   * Simple chat using SGLang directly (OpenAI-compatible API)
+   * Submit inference job using standard inference API
+   * Used for chat, deepresearch, and auto modes
    */
-  private async simpleChatCompletion(
-    messages: any[],
+  private async submitInferenceJob(
+    mode: string,
+    question: string,
+    inputFiles: string[],
     config: any,
   ): Promise<string> {
-    // Use last user message as question for fast path
-    const last = messages[messages.length - 1];
-    const question =
-      typeof last.content === "string"
-        ? last.content
-        : Array.isArray(last.content)
-        ? last.content.find((c: any) => c.type === "text")?.text || ""
-        : "";
-
     const requestBody = {
+      mode,
       question,
-      mode: "default",
-      config: {
+      input_files: inputFiles,
+      parameters: {
         temperature: config?.temperature ?? 0.7,
         top_p: config?.top_p ?? 0.95,
-        presence_penalty: config?.presence_penalty ?? 1.1,
-        planning_port: config?.planning_port ?? 6001,
-        max_rounds: 1,
-        timeout: 120,
-        max_tokens: config?.max_tokens ?? 8000, // Chat mode: shorter responses
+        max_tokens: config?.max_tokens ?? 8000,
       },
     };
 
-    // Call Agent API sync endpoint for reliability (fast path)
-    const response = await fetch(`${this.baseUrl}/agent/inference/sync`, {
+    // Submit job
+    const submitResponse = await fetch(`${this.baseUrl}/inference/submit`, {
       method: "POST",
       headers: this.getHeaders(),
       body: JSON.stringify(requestBody),
     });
 
-    if (!response.ok) {
-      let msg = response.statusText;
+    if (!submitResponse.ok) {
+      let msg = submitResponse.statusText;
       try {
-        const data = await response.json();
-        msg = data?.error || JSON.stringify(data);
+        const data = await submitResponse.json();
+        msg = data?.detail || data?.error || JSON.stringify(data);
       } catch {}
-      throw new Error(`Chat completion failed (${response.status}): ${msg}`);
+      throw new Error(
+        `Inference submission failed (${submitResponse.status}): ${msg}`,
+      );
     }
 
-    const result = await response.json();
-    if (result?.status !== "completed") {
-      throw new Error(`Unexpected status: ${result?.status || "unknown"}`);
+    const submitResult = await submitResponse.json();
+    return submitResult.job_id;
+  }
+
+  /**
+   * Poll job status until completion
+   */
+  private async pollInferenceJob(
+    jobId: string,
+    onUpdate?: (message: string) => void,
+  ): Promise<any> {
+    const maxAttempts = 300; // 10 minutes
+    const pollInterval = 2000; // 2 seconds
+
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      // Get job status
+      const statusResponse = await fetch(`${this.baseUrl}/inference/${jobId}`, {
+        method: "GET",
+        headers: this.getHeaders(),
+      });
+
+      if (!statusResponse.ok) {
+        throw new Error(
+          `Failed to get job status: ${statusResponse.statusText}`,
+        );
+      }
+
+      const status = await statusResponse.json();
+      console.log(`[DeepMicroPath] Job ${jobId} status: ${status.status}`);
+
+      // Update progress
+      if (onUpdate) {
+        const progress = status.progress || 0;
+        onUpdate(`⏳ Processing... (${progress.toFixed(0)}%)`);
+      }
+
+      // Check completion
+      if (status.status === "COMPLETED") {
+        // Get result
+        const resultResponse = await fetch(
+          `${this.baseUrl}/inference/${jobId}/result`,
+          {
+            method: "GET",
+            headers: this.getHeaders(),
+          },
+        );
+
+        if (!resultResponse.ok) {
+          throw new Error(`Failed to get result: ${resultResponse.statusText}`);
+        }
+
+        const result = await resultResponse.json();
+        return result.result;
+      }
+
+      if (status.status === "FAILED") {
+        throw new Error(status.error || "Job failed");
+      }
+
+      if (status.status === "CANCELED") {
+        throw new Error("Job was canceled");
+      }
+
+      // Wait before next poll
+      await new Promise((resolve) => setTimeout(resolve, pollInterval));
     }
-    return result?.result?.prediction || "";
+
+    throw new Error("Job polling timeout (10 minutes exceeded)");
   }
 
   /**
    * Main chat method - implements LLMApi interface
-   * Uses simple chat for chat mode, Agent API for others
+   * - Microbiology Report: uses Agent API (with tools)
+   * - Other modes: uses Inference API (standard jobs)
    */
   async chat(options: ChatOptions): Promise<void> {
     const messages = options.messages;
@@ -529,50 +663,26 @@ export class DeepMicroPathApi implements LLMApi {
 
     const modelName = options.config.model;
 
-    // Chat mode: use simple fast path (direct SGLang)
-    if (modelName.includes("chat")) {
-      console.log("[DeepMicroPath] Using simple chat mode (fast)");
+    // Determine mode and API
+    let mode = "chat";
+    let useAgentApi = false;
 
-      try {
-        if (options.onUpdate) {
-          options.onUpdate("💬 Generating response...", "");
-        }
-
-        const response = await this.simpleChatCompletion(
-          messages,
-          options.config,
-        );
-        options.onFinish(response, new Response());
-        return;
-      } catch (error) {
-        console.error("[DeepMicroPath] Simple chat error:", error);
-        if (options.onError) {
-          options.onError(error as Error);
-        } else {
-          options.onFinish(
-            `❌ Error: ${(error as Error).message}`,
-            new Response(),
-          );
-        }
-        return;
-      }
-    }
-
-    // Other modes: use Agent API
-    // deepmicropath-deepresearch -> default (Agent API uses "default" for research)
-    // deepmicropath-microbiology-report -> microbiology (Agent API mode)
-    // deepmicropath-auto -> auto
-    let mode = "auto";
     if (modelName.includes("microbiology")) {
       mode = "microbiology";
+      useAgentApi = true; // Only microbiology uses Agent API
     } else if (modelName.includes("deepresearch")) {
-      mode = "default";
-    } else {
+      mode = "deepresearch";
+    } else if (modelName.includes("auto")) {
       mode = "auto";
+    } else {
+      mode = "chat";
     }
 
-    // Handle attached files - convert to Base64 format expected by Agent API
+    console.log(`[DeepMicroPath] Mode: ${mode}, UseAgentAPI: ${useAgentApi}`);
+
+    // Handle attached files - convert to Base64 format
     const files: Array<{ name: string; content: string }> = [];
+    let fileUrls: string[] = [];
 
     // Extract image_url attachments from multimodal content
     if (Array.isArray(lastMessage.content)) {
@@ -611,49 +721,75 @@ export class DeepMicroPathApi implements LLMApi {
       }
     }
 
-    // Show loading indicator
-    let loadingInterval: NodeJS.Timeout | null = null;
-    if (options.onUpdate) {
-      const loadingMessages =
-        mode === "microbiology"
-          ? [
-              "🧬 Analyzing microbial data...",
-              "🔬 Processing samples...",
-              "📊 Generating insights...",
-            ]
-          : mode === "default"
-          ? ["🔍 Researching...", "📚 Analyzing...", "💡 Synthesizing..."]
-          : [
-              "⚙️ Processing request...",
-              "📊 Analyzing data...",
-              "💡 Preparing results...",
-            ];
-
-      let messageIndex = 0;
-      options.onUpdate(loadingMessages[0], "");
-
-      loadingInterval = setInterval(() => {
-        if (options.onUpdate) {
-          messageIndex = (messageIndex + 1) % loadingMessages.length;
-          options.onUpdate(loadingMessages[messageIndex], "");
+    // Upload files if needed
+    if (files.length > 0) {
+      try {
+        console.log(`[DeepMicroPath] Uploading ${files.length} files...`);
+        fileUrls = await this.uploadFilesFromBase64(files);
+        console.log(`[DeepMicroPath] Files uploaded:`, fileUrls);
+      } catch (error) {
+        console.error("[DeepMicroPath] File upload failed:", error);
+        if (options.onError) {
+          options.onError(error as Error);
+        } else {
+          options.onFinish(
+            `❌ File upload failed: ${(error as Error).message}`,
+            new Response(),
+          );
         }
-      }, 2000);
+        return;
+      }
     }
 
+    // Show loading indicator
+    let loadingInterval: NodeJS.Timeout | null = null;
+    const loadingMessages =
+      mode === "microbiology"
+        ? [
+            "🧬 Analyzing microbial data...",
+            "🔬 Processing samples...",
+            "📊 Generating insights...",
+          ]
+        : mode === "deepresearch"
+        ? [
+            "🔍 Deep researching...",
+            "📚 Analyzing sources...",
+            "💡 Synthesizing...",
+          ]
+        : mode === "auto"
+        ? ["⚙️ Auto-detecting...", "📊 Processing...", "💡 Analyzing..."]
+        : ["💬 Generating response...", "✨ Thinking...", "📝 Writing..."];
+
     try {
-      // Direct sync inference call to Agent API
+      // Start loading indicator
+      let messageIndex = 0;
+      if (options.onUpdate) {
+        options.onUpdate(loadingMessages[0], "");
+        loadingInterval = setInterval(() => {
+          if (options.onUpdate) {
+            messageIndex = (messageIndex + 1) % loadingMessages.length;
+            options.onUpdate(loadingMessages[messageIndex], "");
+          }
+        }, 2000);
+      }
+
+      // Use unified inference submission for all modes
       const result = await this.submitInferenceSync(question, mode, files, {
-        temperature: options.config.temperature,
-        top_p: options.config.top_p,
+        temperature: options.config.temperature || 0.7,
+        top_p: options.config.top_p || 0.95,
         presence_penalty: options.config.presence_penalty || 1.1,
+        max_tokens: (options.config as any).max_tokens || 8000,
       });
 
-      // Extract final result from Agent API response
+      // Extract final result
       const inferenceResult = result.result;
       let finalMessage = inferenceResult?.prediction || "";
 
-      // Add metadata footer with Agent API metadata
-      if (inferenceResult?.metadata) {
+      // Add metadata footer if available
+      if (
+        inferenceResult?.metadata &&
+        inferenceResult.metadata.execution_time
+      ) {
         const metadata = inferenceResult.metadata;
         finalMessage += `\n\n---\n`;
         finalMessage += `⏱️ 执行时间: ${metadata.execution_time?.toFixed(1)}s`;
@@ -665,17 +801,32 @@ export class DeepMicroPathApi implements LLMApi {
         }
       }
 
-      // Call finish callback
       options.onFinish(finalMessage, new Response());
     } catch (error) {
-      console.error("[DeepMicroPath] Chat error:", error);
-      if (options.onError) {
-        options.onError(error as Error);
+      console.error(`[DeepMicroPath] ${mode} error:`, error);
+
+      let errorMessage = (error as Error).message;
+
+      // Provide more helpful error messages
+      if (errorMessage.includes("All connection attempts failed")) {
+        errorMessage =
+          "❌ Backend service error: Cannot connect to inference engine (SGLang). Please ensure the SGLang service is running on port 6001.";
+      } else if (
+        errorMessage.includes("socket hang up") ||
+        errorMessage.includes("ECONNRESET")
+      ) {
+        errorMessage =
+          "❌ Connection lost: The backend server closed the connection unexpectedly. This may be due to timeout or server crash.";
+      } else if (errorMessage.includes("500")) {
+        errorMessage = `❌ Server error: ${errorMessage}. Please check backend logs.`;
       } else {
-        options.onFinish(
-          `❌ Error: ${(error as Error).message}`,
-          new Response(),
-        );
+        errorMessage = `❌ Error: ${errorMessage}`;
+      }
+
+      if (options.onError) {
+        options.onError(new Error(errorMessage));
+      } else {
+        options.onFinish(errorMessage, new Response());
       }
     } finally {
       // Always clear loading indicator on completion
