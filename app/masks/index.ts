@@ -3,7 +3,7 @@ import { Mask } from "../store/mask";
 import { type BuiltinMask } from "./typing";
 export { type BuiltinMask } from "./typing";
 
-// EvidenceSeek - Pharmaceutical & Microbiology Prompts
+// SeekEvidence - Pharmaceutical & Microbiology Prompts
 import { EVIDENCESEEK_CN_MASKS } from "./evidenceseek-cn";
 
 export const BUILTIN_MASK_ID = 100000;
@@ -22,7 +22,7 @@ export const BUILTIN_MASK_STORE = {
   },
 };
 
-// Initialize with EvidenceSeek pharmaceutical prompts
+// Initialize with SeekEvidence pharmaceutical prompts
 export const BUILTIN_MASKS: BuiltinMask[] = EVIDENCESEEK_CN_MASKS.map((m) =>
   BUILTIN_MASK_STORE.add(m),
 );

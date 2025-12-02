@@ -66,16 +66,18 @@ const MergeStates: StateMerger = {
   [StoreKey.Chat]: (localState, remoteState) => {
     // merge sessions
     const localSessions: Record<string, ChatSession> = {};
-    localState.sessions.forEach((s) => (localSessions[s.id] = s));
+    (localState as any).sessions.forEach(
+      (s: ChatSession) => (localSessions[s.id] = s),
+    );
 
-    remoteState.sessions.forEach((remoteSession) => {
+    (remoteState as any).sessions.forEach((remoteSession: ChatSession) => {
       // skip empty chats
       if (remoteSession.messages.length === 0) return;
 
       const localSession = localSessions[remoteSession.id];
       if (!localSession) {
         // if remote session is new, just merge it
-        localState.sessions.push(remoteSession);
+        (localState as any).sessions.push(remoteSession);
       } else {
         // if both have the same session id, merge the messages
         const localMessageIds = new Set(localSession.messages.map((v) => v.id));
@@ -93,29 +95,29 @@ const MergeStates: StateMerger = {
     });
 
     // sort local sessions with date field in desc order
-    localState.sessions.sort(
-      (a, b) =>
+    (localState as any).sessions.sort(
+      (a: ChatSession, b: ChatSession) =>
         new Date(b.lastUpdate).getTime() - new Date(a.lastUpdate).getTime(),
     );
 
     return localState;
   },
   [StoreKey.Prompt]: (localState, remoteState) => {
-    localState.prompts = {
-      ...remoteState.prompts,
-      ...localState.prompts,
+    (localState as any).prompts = {
+      ...(remoteState as any).prompts,
+      ...(localState as any).prompts,
     };
     return localState;
   },
   [StoreKey.Mask]: (localState, remoteState) => {
-    localState.masks = {
-      ...remoteState.masks,
-      ...localState.masks,
+    (localState as any).masks = {
+      ...(remoteState as any).masks,
+      ...(localState as any).masks,
     };
     return localState;
   },
-  [StoreKey.Config]: mergeWithUpdate<AppState[StoreKey.Config]>,
-  [StoreKey.Access]: mergeWithUpdate<AppState[StoreKey.Access]>,
+  [StoreKey.Config]: mergeWithUpdate as any,
+  [StoreKey.Access]: mergeWithUpdate as any,
 };
 
 export function getLocalAppState() {

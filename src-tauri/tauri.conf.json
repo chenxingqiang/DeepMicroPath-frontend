@@ -8,7 +8,7 @@
     "withGlobalTauri": true
   },
   "package": {
-    "productName": "EvidenceSeek",
+    "productName": "SeekEvidence",
     "version": "1.0.0"
   },
   "tauri": {
@@ -73,7 +73,7 @@
         "icons/icon.ico"
       ],
       "identifier": "com.turingai.evidenceseek",
-      "longDescription": "EvidenceSeek is an AI-powered microbiology analysis and research platform based on DeepMicroPath.",
+      "longDescription": "SeekEvidence is an AI-powered microbiology analysis and research platform based on DeepMicroPath.",
       "macOS": {
         "entitlements": null,
         "exceptionDomain": "",
@@ -82,7 +82,7 @@
         "signingIdentity": null
       },
       "resources": [],
-      "shortDescription": "EvidenceSeek App",
+      "shortDescription": "SeekEvidence App",
       "targets": "all",
       "windows": {
         "certificateThumbprint": null,
@@ -110,7 +110,7 @@
         "fullscreen": false,
         "height": 600,
         "resizable": true,
-        "title": "EvidenceSeek",
+        "title": "SeekEvidence",
         "width": 960,
         "hiddenTitle": true,
         "titleBarStyle": "Overlay"

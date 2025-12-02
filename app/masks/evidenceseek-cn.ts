@@ -1,7 +1,7 @@
 import { BuiltinMask } from "./typing";
 
 /**
- * EvidenceSeek - Pharmaceutical & Microbiology AI Prompts (Chinese)
+ * SeekEvidence - Pharmaceutical & Microbiology AI Prompts (Chinese)
  * Professional medical and research-focused templates
  */
 

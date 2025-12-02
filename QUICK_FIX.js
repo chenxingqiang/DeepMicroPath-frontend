@@ -1,7 +1,7 @@
 // Quick Fix Script for Browser Console
 // Run this in the browser console (F12 -> Console tab) to reset models
 
-console.log('🔧 EvidenceSeek Quick Fix - Resetting to DeepMicroPath models only...');
+console.log('🔧 SeekEvidence Quick Fix - Resetting to DeepMicroPath models only...');
 
 // Define DeepMicroPath models
 const deepmicropathModels = [

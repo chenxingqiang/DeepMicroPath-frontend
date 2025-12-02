@@ -34,7 +34,6 @@ export function AuthPage() {
 
   const resetAccessCode = () => {
     accessStore.update((access) => {
-      access.openaiApiKey = "";
       access.accessCode = "";
     });
   }; // Reset access code to empty string
@@ -83,26 +82,14 @@ export function AuthPage() {
           <PasswordInput
             style={{ marginTop: "3vh", marginBottom: "3vh" }}
             aria={Locale.Settings.ShowPassword}
-            aria-label={Locale.Settings.Access.OpenAI.ApiKey.Placeholder}
-            value={accessStore.openaiApiKey}
+            aria-label="DeepMicroPath API Key"
+            value={accessStore.deepmicropathApiKey}
             type="text"
-            placeholder={Locale.Settings.Access.OpenAI.ApiKey.Placeholder}
+            placeholder="Enter your DeepMicroPath API Key (optional)"
             onChange={(e) => {
               accessStore.update(
-                (access) => (access.openaiApiKey = e.currentTarget.value),
-              );
-            }}
-          />
-          <PasswordInput
-            style={{ marginTop: "3vh", marginBottom: "3vh" }}
-            aria={Locale.Settings.ShowPassword}
-            aria-label={Locale.Settings.Access.Google.ApiKey.Placeholder}
-            value={accessStore.googleApiKey}
-            type="text"
-            placeholder={Locale.Settings.Access.Google.ApiKey.Placeholder}
-            onChange={(e) => {
-              accessStore.update(
-                (access) => (access.googleApiKey = e.currentTarget.value),
+                (access) =>
+                  (access.deepmicropathApiKey = e.currentTarget.value),
               );
             }}
           />

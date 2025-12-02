@@ -26,7 +26,7 @@ const cn = {
     Confirm: "确认",
     Later: "稍后再说",
     SaasTips: "配置太麻烦，想要立即使用",
-    TopTips: "🥳 EvidenceSeek：AI驱动的微生物学分析和研究平台",
+    TopTips: "🥳 SeekEvidence：AI驱动的微生物学分析和研究平台",
   },
   ChatItem: {
     ChatItemCount: (count: number) => `${count} 条对话`,
@@ -311,7 +311,7 @@ const cn = {
 
     Access: {
       SaasStart: {
-        Title: "使用 EvidenceSeek",
+        Title: "使用 SeekEvidence",
         Label: "（AI智能分析）",
         SubTitle:
           "基于 DeepMicroPath 后端, 零配置开箱即用，提供微生物学分析和研究能力",

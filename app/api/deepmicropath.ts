@@ -52,6 +52,9 @@ async function request(req: NextRequest) {
     console.log("[DeepMicroPath] Routing to SGLang directly");
     baseUrl = "http://172.20.1.38:6001";
     path = "/v1/chat/completions";
+  } else {
+    // Add /api/v1/ prefix for backend API calls
+    path = `/api/v1${path}`;
   }
 
   if (!baseUrl.startsWith("http")) {
@@ -62,36 +65,28 @@ async function request(req: NextRequest) {
     baseUrl = baseUrl.slice(0, -1);
   }
 
-  console.log("[DeepMicroPath Proxy] ", path);
-  console.log("[DeepMicroPath Base Url]", baseUrl);
+  console.log("[DeepMicroPath Proxy] Path:", path);
+  console.log("[DeepMicroPath Proxy] Base URL:", baseUrl);
+  console.log("[DeepMicroPath Proxy] Full URL:", fetchUrl);
 
   // Agent API 可能需要更长时间（特别是工具调用和多轮推理）
+  // Increase timeout to 30 minutes for complex reasoning
   const timeoutId = setTimeout(
     () => {
+      console.error("[DeepMicroPath Proxy] Request timeout after 30 minutes");
       controller.abort();
     },
-    15 * 60 * 1000, // 15 minutes timeout for Agent API (longer than Main API)
+    30 * 60 * 1000, // 30 minutes timeout
   );
 
   const fetchUrl = `${baseUrl}${path}`;
-  const fetchOptions: RequestInit = {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: req.headers.get("Authorization") ?? "",
-    },
-    method: req.method,
-    body: req.body,
-    redirect: "manual",
-    // @ts-ignore
-    duplex: "half",
-    signal: controller.signal,
-  };
 
-  // Filter models if custom models are configured
+  // Read body first if needed for filtering
+  let bodyContent = req.body;
   if (serverConfig.customModels && req.body) {
     try {
       const clonedBody = await req.text();
-      fetchOptions.body = clonedBody;
+      bodyContent = clonedBody;
 
       const jsonBody = JSON.parse(clonedBody) as { model?: string };
 
@@ -118,8 +113,28 @@ async function request(req: NextRequest) {
     }
   }
 
+  const fetchOptions: RequestInit = {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: req.headers.get("Authorization") ?? "",
+    },
+    method: req.method,
+    body: bodyContent,
+    redirect: "manual",
+    // @ts-ignore
+    duplex: "half",
+    signal: controller.signal,
+  };
+
+  console.log(
+    "[DeepMicroPath Proxy] Request body:",
+    typeof bodyContent === "string" ? bodyContent.substring(0, 200) : "stream",
+  );
+
   try {
+    console.log("[DeepMicroPath Proxy] Sending request...");
     const res = await fetch(fetchUrl, fetchOptions);
+    console.log("[DeepMicroPath Proxy] Response received, status:", res.status);
 
     // to prevent browser prompt for credentials
     const newHeaders = new Headers(res.headers);
@@ -132,6 +147,26 @@ async function request(req: NextRequest) {
       statusText: res.statusText,
       headers: newHeaders,
     });
+  } catch (error: any) {
+    console.error("[DeepMicroPath Proxy] Fetch error:", {
+      message: error.message,
+      code: error.code,
+      name: error.name,
+      url: fetchUrl,
+    });
+
+    // Return a proper error response
+    return NextResponse.json(
+      {
+        error: true,
+        message: `Proxy error: ${error.message}`,
+        details:
+          error.code === "ECONNRESET"
+            ? "Backend connection was reset. The server may have crashed or timed out."
+            : undefined,
+      },
+      { status: 500 },
+    );
   } finally {
     clearTimeout(timeoutId);
   }

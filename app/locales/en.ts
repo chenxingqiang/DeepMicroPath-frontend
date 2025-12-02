@@ -28,7 +28,7 @@ const en: LocaleType = {
     Later: "Later",
     SaasTips: "Too Complex, Use Immediately Now",
     TopTips:
-      "🥳 EvidenceSeek: AI-powered microbiology analysis and research platform",
+      "🥳 SeekEvidence: AI-powered microbiology analysis and research platform",
   },
   ChatItem: {
     ChatItemCount: (count: number) => `${count} messages`,
@@ -315,7 +315,7 @@ const en: LocaleType = {
     },
     Access: {
       SaasStart: {
-        Title: "Use EvidenceSeek",
+        Title: "Use SeekEvidence",
         Label: " (AI-Powered Analysis)",
         SubTitle:
           "DeepMicroPath backend, zero setup needed, microbiology analysis" +

@@ -10,7 +10,7 @@ import MaskIcon from "../icons/mask.svg";
 import McpIcon from "../icons/mcp.svg";
 import DragIcon from "../icons/drag.svg";
 import DiscoveryIcon from "../icons/discovery.svg";
-import EvidenceSeekLogo from "./evidenceseek-logo";
+import SeekEvidenceLogo from "./evidenceseek-logo";
 
 import Locale from "../locales";
 
@@ -248,9 +248,9 @@ export function SideBar(props: { className?: string }) {
       {...props}
     >
       <SideBarHeader
-        title="EvidenceSeek"
+        title="SeekEvidence"
         subTitle="AI-Powered Microbiology Analysis"
-        logo={<EvidenceSeekLogo variant="icon" size="sm" />}
+        logo={<SeekEvidenceLogo variant="icon" size="sm" />}
         shouldNarrow={shouldNarrow}
       >
         <div className={styles["sidebar-header-bar"]}>

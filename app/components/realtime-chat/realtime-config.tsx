@@ -7,7 +7,7 @@ import { InputRange } from "@/app/components/input-range";
 import { Voice } from "rt-client";
 import { ServiceProvider } from "@/app/constant";
 
-const providers = [ServiceProvider.OpenAI, ServiceProvider.Azure];
+const providers = [ServiceProvider.DeepMicroPath]; // DeepMicroPath only
 
 const models = ["gpt-4o-realtime-preview-2024-10-01"];
 
@@ -17,8 +17,7 @@ export function RealtimeConfigList(props: {
   realtimeConfig: RealtimeConfig;
   updateConfig: (updater: (config: RealtimeConfig) => void) => void;
 }) {
-  const azureConfigComponent = props.realtimeConfig.provider ===
-    ServiceProvider.Azure && (
+  const azureConfigComponent = false && (
     <>
       <ListItem
         title={Locale.Settings.Realtime.Azure.Endpoint.Title}

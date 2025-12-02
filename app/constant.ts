@@ -1,7 +1,7 @@
 export const OWNER = "chenxingqiang";
 export const REPO = "DeepMicroPath";
 export const REPO_URL = `https://github.com/${OWNER}/${REPO}`;
-export const PLUGINS_REPO_URL = `https://github.com/${OWNER}/EvidenceSeek-Plugins`;
+export const PLUGINS_REPO_URL = `https://github.com/${OWNER}/SeekEvidence-Plugins`;
 export const ISSUE_URL = `https://github.com/${OWNER}/${REPO}/issues`;
 export const UPDATE_URL = `${REPO_URL}#keep-updated`;
 export const RELEASE_URL = `${REPO_URL}/releases`;
@@ -32,6 +32,7 @@ export enum Path {
 export enum ApiPath {
   Cors = "",
   DeepMicroPath = "/api/deepmicropath",
+  Artifacts = "/api/artifacts",
 }
 
 export enum SlotID {
@@ -198,7 +199,7 @@ You are an AI assistant with access to system tools. Your role is to help users 
    {
       "method": "write_file",
       "params": {
-        "path": "EvidenceSeek_Information.txt",
+        "path": "SeekEvidence_Information.txt",
         "content": "1"
     }
    }

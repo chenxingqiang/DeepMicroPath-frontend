@@ -1,15 +1,7 @@
-import {
-  Stability,
-  StoreKey,
-  ACCESS_CODE_PREFIX,
-  ApiPath,
-} from "@/app/constant";
-import { getBearerToken } from "@/app/client/api";
+import { StoreKey } from "@/app/constant";
 import { createPersistStore } from "@/app/utils/store";
 import { nanoid } from "nanoid";
-import { uploadImage, base64Image2Blob } from "@/app/utils/chat";
 import { models, getModelParamBasicData } from "@/app/components/sd/sd-panel";
-import { useAccessStore } from "./access";
 
 const defaultModel = {
   name: models[0].name,
@@ -63,11 +55,19 @@ export const useSdStore = createPersistStore<
         okCall?.();
       },
       stabilityRequestCall(data: any) {
+        // Stability API not supported in DeepMicroPath
+        this.updateDraw({
+          ...data,
+          status: "error",
+          error: "Stability API is not supported in DeepMicroPath",
+        });
+        return;
+        /* Disabled Stability code
         const accessStore = useAccessStore.getState();
-        let prefix: string = ApiPath.Stability as string;
+        let prefix: string = "";
         let bearerToken = "";
         if (accessStore.useCustomConfig) {
-          prefix = accessStore.stabilityUrl || (ApiPath.Stability as string);
+          prefix = accessStore.stabilityUrl || "";
           bearerToken = getBearerToken(accessStore.stabilityApiKey);
         }
         if (!bearerToken && accessStore.enabledAccessControl()) {
@@ -133,6 +133,7 @@ export const useSdStore = createPersistStore<
             console.error("Error:", error);
             this.getNextId();
           });
+        */
       },
       updateDraw(_draw: any) {
         const draw = _get().draw || [];

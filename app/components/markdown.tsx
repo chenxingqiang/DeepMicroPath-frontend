@@ -287,7 +287,7 @@ function _MarkDownContent(props: { content: string }) {
     <ReactMarkdown
       remarkPlugins={[RemarkMath, RemarkGfm, RemarkBreaks]}
       rehypePlugins={[
-        RehypeRaw, // Enable HTML parsing for <details> and other tags
+        RehypeRaw as any, // Enable HTML parsing for <details> and other tags
         RehypeKatex,
         [
           RehypeHighlight,

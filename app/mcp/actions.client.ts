@@ -21,9 +21,7 @@ export async function getAvailableClientsCount() {
   return 0;
 }
 
-export async function getAllTools(): Promise<
-  Array<{ clientId: string; tools: any }>
-> {
+export async function getAllTools() {
   return [];
 }
 
@@ -32,33 +30,24 @@ export async function initializeMcpSystem() {
   return undefined;
 }
 
-export async function addMcpServer(
-  clientId: string,
-  config: ServerConfig,
-): Promise<McpConfigData> {
-  console.warn("MCP is disabled in static export builds");
-  return { mcpServers: {} };
+export async function addMcpServer(clientId: string, config: ServerConfig) {
+  throw new Error("MCP is disabled in static export builds");
 }
 
-export async function pauseMcpServer(clientId: string): Promise<McpConfigData> {
-  console.warn("MCP is disabled in static export builds");
-  return { mcpServers: {} };
+export async function pauseMcpServer(clientId: string) {
+  throw new Error("MCP is disabled in static export builds");
 }
 
 export async function resumeMcpServer(clientId: string): Promise<void> {
-  console.warn("MCP is disabled in static export builds");
+  throw new Error("MCP is disabled in static export builds");
 }
 
-export async function removeMcpServer(
-  clientId: string,
-): Promise<McpConfigData> {
-  console.warn("MCP is disabled in static export builds");
-  return { mcpServers: {} };
+export async function removeMcpServer(clientId: string) {
+  throw new Error("MCP is disabled in static export builds");
 }
 
-export async function restartAllClients(): Promise<McpConfigData> {
-  console.warn("MCP is disabled in static export builds");
-  return { mcpServers: {} };
+export async function restartAllClients() {
+  throw new Error("MCP is disabled in static export builds");
 }
 
 export async function executeMcpAction(

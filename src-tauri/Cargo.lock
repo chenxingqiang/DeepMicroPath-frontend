@@ -864,6 +864,21 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0206175f82b8d6bf6652ff7d71a1e27fd2e4efde587fd368662814d6ec1d9ce0"
 
 [[package]]
+name = "evidenceseek"
+version = "1.0.0"
+dependencies = [
+ "bytes",
+ "futures-util",
+ "percent-encoding",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "tauri",
+ "tauri-build",
+ "tauri-plugin-window-state",
+]
+
+[[package]]
 name = "fastrand"
 version = "1.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1981,21 +1996,6 @@ name = "new_debug_unreachable"
 version = "1.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e4a24736216ec316047a1fc4252e27dabb04218aa4a3f37c6e7ddbf1f9782b54"
-
-[[package]]
-name = "nextchat"
-version = "0.1.0"
-dependencies = [
- "bytes",
- "futures-util",
- "percent-encoding",
- "reqwest",
- "serde",
- "serde_json",
- "tauri",
- "tauri-build",
- "tauri-plugin-window-state",
-]
 
 [[package]]
 name = "nix"
@@ -3479,8 +3479,9 @@ dependencies = [
 
 [[package]]
 name = "tauri-plugin-window-state"
-version = "0.1.0"
-source = "git+https://github.com/tauri-apps/plugins-workspace?branch=v1#7b9d7a1d8896c213998949a423d5835e8e2734c6"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fa47eaa4047a7b51064caff32f0c6282e2c5adc6ceacdd493ecf1b01fa4b0eaa"
 dependencies = [
  "bincode",
  "bitflags 2.3.2",

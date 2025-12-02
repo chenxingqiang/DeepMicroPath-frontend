@@ -5,7 +5,6 @@ import { createPersistStore } from "../utils/store";
 import { getClientConfig } from "../config/client";
 import yaml from "js-yaml";
 import { adapter, getOperationId } from "../utils";
-import { useAccessStore } from "./access";
 
 const isApp = getClientConfig()?.isApp !== false;
 
@@ -61,13 +60,7 @@ export const FunctionToolService = {
     if (authLocation == "header") {
       headers[headerName] = tokenValue;
     }
-    // try using openaiApiKey for Dalle3 Plugin.
-    if (!tokenValue && plugin.id === "dalle3") {
-      const openaiApiKey = useAccessStore.getState().openaiApiKey;
-      if (openaiApiKey) {
-        headers[headerName] = `Bearer ${openaiApiKey}`;
-      }
-    }
+    // DeepMicroPath doesn't need special Dalle3 handling
     const api = new OpenAPIClientAxios({
       definition: yaml.load(plugin.content) as any,
       axiosConfigDefaults: {

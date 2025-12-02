@@ -532,7 +532,7 @@ export function ChatActions(props: {
   // switch model
   const currentModel = session.mask.modelConfig.model;
   const currentProviderName =
-    session.mask.modelConfig?.providerName || ServiceProvider.OpenAI;
+    session.mask.modelConfig?.providerName || ServiceProvider.DeepMicroPath;
   const allModels = useAllModels();
   const models = useMemo(() => {
     const filteredModels = allModels.filter((m) => m.available);
@@ -1297,7 +1297,7 @@ function _Chat() {
       setSpeechStatus(false);
     } else {
       var api: ClientApi;
-      api = new ClientApi(ModelProvider.GPT);
+      api = new ClientApi(ModelProvider.DeepMicroPath);
       const config = useAppConfig.getState();
       setSpeechLoading(true);
       ttsPlayer.init();
@@ -1478,11 +1478,13 @@ function _Chat() {
             if (!res) return;
             if (payload.key) {
               accessStore.update(
-                (access) => (access.openaiApiKey = payload.key!),
+                (access) => (access.deepmicropathApiKey = payload.key!),
               );
             }
             if (payload.url) {
-              accessStore.update((access) => (access.openaiUrl = payload.url!));
+              accessStore.update(
+                (access) => (access.deepmicropathUrl = payload.url!),
+              );
             }
             accessStore.update((access) => (access.useCustomConfig = true));
           });
@@ -2135,7 +2137,12 @@ function _Chat() {
                         >
                           {!isImage && (
                             <FileIconComponent
-                              style={{ width: "100%", height: "100%" }}
+                              style={{
+                                width: "64px",
+                                height: "64px",
+                                maxWidth: "100%",
+                                maxHeight: "100%",
+                              }}
                             />
                           )}
                           <div className={styles["attach-image-mask"]}>

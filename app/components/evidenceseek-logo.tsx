@@ -1,5 +1,5 @@
 /**
- * EvidenceSeek Logo Component
+ * SeekEvidence Logo Component
  * Professional pharmaceutical AI branding
  */
 
@@ -12,7 +12,7 @@ export interface LogoProps {
   className?: string;
 }
 
-export function EvidenceSeekLogo({
+export function SeekEvidenceLogo({
   variant = "horizontal",
   size = "md",
   className = "",
@@ -240,4 +240,4 @@ export function EvidenceSeekLogo({
   );
 }
 
-export default EvidenceSeekLogo;
+export default SeekEvidenceLogo;
