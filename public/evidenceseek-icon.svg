@@ -11,59 +11,65 @@
     </linearGradient>
     
     <filter id="shadow">
-      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000" flood-opacity="0.3"/>
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000" flood-opacity="0.25"/>
     </filter>
   </defs>
   
-  <!-- 深色背景 -->
-  <rect width="512" height="512" rx="96" fill="#0f172a"/>
+  <!-- 深色圆角背景 -->
+  <rect width="512" height="512" rx="90" fill="#0a1628"/>
   
-  <!-- 六边形框架 - 科技感 -->
-  <polygon points="256,50 440,135 440,335 256,420 72,335 72,135" 
+  <!-- 六边形框架 - 完全对称 -->
+  <polygon points="256,55 426,153 426,349 256,447 86,349 86,153" 
            fill="none" 
            stroke="url(#tealBlue)" 
            stroke-width="3" 
-           opacity="0.4"/>
+           opacity="0.35"/>
   
-  <!-- 中心圆环 - 显微镜视野 -->
-  <circle cx="256" cy="256" r="145" fill="none" stroke="url(#emerald)" stroke-width="6"/>
-  <circle cx="256" cy="256" r="128" fill="none" stroke="#34d399" stroke-width="2" opacity="0.5"/>
+  <!-- 中心圆环 - 完全居中 -->
+  <circle cx="256" cy="256" r="140" fill="none" stroke="url(#emerald)" stroke-width="5"/>
+  <circle cx="256" cy="256" r="125" fill="none" stroke="#34d399" stroke-width="2" opacity="0.4"/>
   
-  <!-- 病原体图形 -->
+  <!-- 病原体图形 - 完全对称的六角星布局 -->
   <g transform="translate(256, 256)" filter="url(#shadow)">
-    <!-- 中心体 -->
-    <circle r="50" fill="url(#emerald)"/>
-    <circle r="35" fill="#0f172a" opacity="0.4"/>
+    <!-- 中心核心 - 三层圆 -->
+    <circle r="48" fill="url(#emerald)"/>
+    <circle r="32" fill="#0a1628" opacity="0.35"/>
     <circle r="20" fill="url(#tealBlue)"/>
     
-    <!-- 六个突触 -->
-    <g stroke="url(#emerald)" stroke-width="10" stroke-linecap="round">
-      <line x1="0" y1="-55" x2="0" y2="-95"/>
-      <line x1="48" y1="-28" x2="82" y2="-48"/>
-      <line x1="48" y1="28" x2="82" y2="48"/>
-      <line x1="0" y1="55" x2="0" y2="95"/>
-      <line x1="-48" y1="28" x2="-82" y2="48"/>
-      <line x1="-48" y1="-28" x2="-82" y2="-48"/>
+    <!-- 六个突触 - 精确60度间隔 -->
+    <g stroke="url(#emerald)" stroke-width="9" stroke-linecap="round">
+      <!-- 0° (上) -->
+      <line x1="0" y1="-52" x2="0" y2="-90"/>
+      <!-- 60° (右上) -->
+      <line x1="45" y1="-26" x2="78" y2="-45"/>
+      <!-- 120° (右下) -->
+      <line x1="45" y1="26" x2="78" y2="45"/>
+      <!-- 180° (下) -->
+      <line x1="0" y1="52" x2="0" y2="90"/>
+      <!-- 240° (左下) -->
+      <line x1="-45" y1="26" x2="-78" y2="45"/>
+      <!-- 300° (左上) -->
+      <line x1="-45" y1="-26" x2="-78" y2="-45"/>
     </g>
     
-    <!-- 端点 -->
+    <!-- 六个端点球 - 精确对称位置 -->
     <g fill="url(#tealBlue)">
-      <circle cx="0" cy="-102" r="14"/>
-      <circle cx="88" cy="-52" r="14"/>
-      <circle cx="88" cy="52" r="14"/>
-      <circle cx="0" cy="102" r="14"/>
-      <circle cx="-88" cy="52" r="14"/>
-      <circle cx="-88" cy="-52" r="14"/>
+      <circle cx="0" cy="-98" r="14"/>
+      <circle cx="85" cy="-49" r="14"/>
+      <circle cx="85" cy="49" r="14"/>
+      <circle cx="0" cy="98" r="14"/>
+      <circle cx="-85" cy="49" r="14"/>
+      <circle cx="-85" cy="-49" r="14"/>
     </g>
     
-    <!-- 端点高光 -->
-    <g fill="#fff" opacity="0.3">
-      <circle cx="-3" cy="-106" r="5"/>
-      <circle cx="85" cy="-56" r="5"/>
-      <circle cx="85" cy="48" r="5"/>
-      <circle cx="-3" cy="98" r="5"/>
-      <circle cx="-91" cy="48" r="5"/>
-      <circle cx="-91" cy="-56" r="5"/>
+    <!-- 端点高光 - 统一位置 -->
+    <g fill="#fff" opacity="0.35">
+      <circle cx="-4" cy="-102" r="5"/>
+      <circle cx="81" cy="-53" r="5"/>
+      <circle cx="81" cy="45" r="5"/>
+      <circle cx="-4" cy="94" r="5"/>
+      <circle cx="-89" cy="45" r="5"/>
+      <circle cx="-89" cy="-53" r="5"/>
     </g>
   </g>
 </svg>
