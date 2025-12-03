@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <defs>
+    <linearGradient id="em" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34d399"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+    <linearGradient id="tb" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06b6d4"/>
+      <stop offset="100%" stop-color="#0891b2"/>
+    </linearGradient>
+  </defs>
+  
+  <rect width="32" height="32" rx="6" fill="#0f172a"/>
+  
+  <!-- 简化的病原体 -->
+  <g transform="translate(16, 16)">
+    <circle r="5" fill="url(#em)"/>
+    <circle r="2.5" fill="url(#tb)"/>
+    
+    <!-- 六突触简化 -->
+    <g stroke="url(#em)" stroke-width="1.5" stroke-linecap="round">
+      <line x1="0" y1="-6" x2="0" y2="-10"/>
+      <line x1="5" y1="-3" x2="9" y2="-5"/>
+      <line x1="5" y1="3" x2="9" y2="5"/>
+      <line x1="0" y1="6" x2="0" y2="10"/>
+      <line x1="-5" y1="3" x2="-9" y2="5"/>
+      <line x1="-5" y1="-3" x2="-9" y2="-5"/>
+    </g>
+    
+    <g fill="url(#tb)">
+      <circle cx="0" cy="-11" r="2"/>
+      <circle cx="9.5" cy="-5.5" r="2"/>
+      <circle cx="9.5" cy="5.5" r="2"/>
+      <circle cx="0" cy="11" r="2"/>
+      <circle cx="-9.5" cy="5.5" r="2"/>
+      <circle cx="-9.5" cy="-5.5" r="2"/>
+    </g>
+  </g>
+</svg>
+

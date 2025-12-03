@@ -1,33 +1,69 @@
-<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Background circle -->
-  <rect width="64" height="64" rx="12" fill="url(#bgGradient)"/>
-  
-  <!-- DNA Helix Icon (centered and larger) -->
-  <g id="dna-helix" transform="translate(16, 8)">
-    <!-- Left strand -->
-    <path d="M4 4 Q 10 16, 4 28 Q -2 40, 4 52" stroke="#FFFFFF" stroke-width="3.5" fill="none" stroke-linecap="round"/>
-    <!-- Right strand -->
-    <path d="M28 4 Q 22 16, 28 28 Q 34 40, 28 52" stroke="#FFFFFF" stroke-width="3.5" fill="none" stroke-linecap="round"/>
-    
-    <!-- Connecting bars (base pairs) -->
-    <line x1="6" y1="10" x2="26" y2="10" stroke="#00BCD4" stroke-width="2.5" opacity="0.9"/>
-    <line x1="8" y1="18" x2="24" y2="18" stroke="#FFFFFF" stroke-width="2.5" opacity="0.7"/>
-    <line x1="4" y1="28" x2="28" y2="28" stroke="#00BCD4" stroke-width="2.5" opacity="0.9"/>
-    <line x1="8" y1="38" x2="24" y2="38" stroke="#FFFFFF" stroke-width="2.5" opacity="0.7"/>
-    <line x1="6" y1="46" x2="26" y2="46" stroke="#00BCD4" stroke-width="2.5" opacity="0.9"/>
-    
-    <!-- Decorative molecules -->
-    <circle cx="4" cy="4" r="3" fill="#FFFFFF"/>
-    <circle cx="28" cy="4" r="3" fill="#00BCD4"/>
-    <circle cx="4" cy="52" r="3" fill="#FFFFFF"/>
-    <circle cx="28" cy="52" r="3" fill="#00BCD4"/>
-  </g>
-  
-  <!-- Gradients -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <defs>
-    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#006B7D;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#1A237E;stop-opacity:1" />
+    <linearGradient id="emerald" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34d399"/>
+      <stop offset="100%" stop-color="#059669"/>
     </linearGradient>
+    
+    <linearGradient id="tealBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06b6d4"/>
+      <stop offset="100%" stop-color="#0891b2"/>
+    </linearGradient>
+    
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
   </defs>
+  
+  <!-- 深色背景 -->
+  <rect width="512" height="512" rx="96" fill="#0f172a"/>
+  
+  <!-- 六边形框架 - 科技感 -->
+  <polygon points="256,50 440,135 440,335 256,420 72,335 72,135" 
+           fill="none" 
+           stroke="url(#tealBlue)" 
+           stroke-width="3" 
+           opacity="0.4"/>
+  
+  <!-- 中心圆环 - 显微镜视野 -->
+  <circle cx="256" cy="256" r="145" fill="none" stroke="url(#emerald)" stroke-width="6"/>
+  <circle cx="256" cy="256" r="128" fill="none" stroke="#34d399" stroke-width="2" opacity="0.5"/>
+  
+  <!-- 病原体图形 -->
+  <g transform="translate(256, 256)" filter="url(#shadow)">
+    <!-- 中心体 -->
+    <circle r="50" fill="url(#emerald)"/>
+    <circle r="35" fill="#0f172a" opacity="0.4"/>
+    <circle r="20" fill="url(#tealBlue)"/>
+    
+    <!-- 六个突触 -->
+    <g stroke="url(#emerald)" stroke-width="10" stroke-linecap="round">
+      <line x1="0" y1="-55" x2="0" y2="-95"/>
+      <line x1="48" y1="-28" x2="82" y2="-48"/>
+      <line x1="48" y1="28" x2="82" y2="48"/>
+      <line x1="0" y1="55" x2="0" y2="95"/>
+      <line x1="-48" y1="28" x2="-82" y2="48"/>
+      <line x1="-48" y1="-28" x2="-82" y2="-48"/>
+    </g>
+    
+    <!-- 端点 -->
+    <g fill="url(#tealBlue)">
+      <circle cx="0" cy="-102" r="14"/>
+      <circle cx="88" cy="-52" r="14"/>
+      <circle cx="88" cy="52" r="14"/>
+      <circle cx="0" cy="102" r="14"/>
+      <circle cx="-88" cy="52" r="14"/>
+      <circle cx="-88" cy="-52" r="14"/>
+    </g>
+    
+    <!-- 端点高光 -->
+    <g fill="#fff" opacity="0.3">
+      <circle cx="-3" cy="-106" r="5"/>
+      <circle cx="85" cy="-56" r="5"/>
+      <circle cx="85" cy="48" r="5"/>
+      <circle cx="-3" cy="98" r="5"/>
+      <circle cx="-91" cy="48" r="5"/>
+      <circle cx="-91" cy="-56" r="5"/>
+    </g>
+  </g>
 </svg>

@@ -66,8 +66,8 @@
   </g>
   
   <!-- 文字标识 -->
-  <text x="256" y="470" text-anchor="middle" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="28" font-weight="600" letter-spacing="3">
-    DMP
+  <text x="256" y="468" text-anchor="middle" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="22" font-weight="600" letter-spacing="2">
+    EvidenceSeek
   </text>
 </svg>
 
